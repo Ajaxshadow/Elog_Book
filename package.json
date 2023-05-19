@@ -1,15 +1,19 @@
 {
   "private": true,
   "dependencies": {
+    "@reduxjs/toolkit": "^1.9.5",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^14.4.3",
-    "@types/node": "^20.1.7",
+    "@types/node": "^20.2.1",
     "@types/react": "^18.2.6",
     "@types/react-dom": "^18.2.4",
     "@types/websocket": "^1.0.5",
+    "firebase": "^9.22.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-icons": "^4.8.0",
+    "react-redux": "^8.0.5",
     "react-router-dom": "^6.11.1",
     "react-scripts": "5.0.1",
     "typescript": "^5.0.4",
@@ -40,6 +44,7 @@
     ]
   },
   "devDependencies": {
+    "file-loader": "^6.2.0",
     "tailwindcss": "^3.3.2"
   }
 }

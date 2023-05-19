@@ -7,27 +7,54 @@ import {
   NavLink,
 } from "react-router-dom";
 import logo from "./assets/Logo.svg";
-import BGCircles from "./assets/BGCircles.svg";
-import "./App.css";
 import { useState } from "react";
+import Landing from "./pages/Landing";
+import React from "react";
+import Button from "./components/Button";
+import GlobalBG from "./assets/GlobalBG.svg";
+import Login from "./pages/Login";
+import { initializeApp } from "firebase/app";
+import { config } from "./firebaseConfig/config";
+import { getAuth, signOut } from "firebase/auth";
+import Student from "./pages/Student";
+import Register from "./pages/Register";
+import { useAppSelector } from "./app/hooks";
 
-function App() {
+initializeApp(config.firebaseConfig);
+
+export function App() {
+  const [loggedIn, setLoggedIn] = useState({} as any);
+
+  const user = useAppSelector((state) => state.app.user);
+
   return (
     <BrowserRouter>
-      <div className="w-screen h-screen absolute bg-black md:hidden">
-        <p className="bg-black text-white text-sm py-1 text-center">
-          ADEBOYE JACOB E-LOG BOOK | Final Project
+      <div className="w-screen h-screen absolute bg-rose-100 md:hidden z-50">
+        <p className=" bg-black text-white text-sm py-1 text-center">
+          ADEBOYE JACOB E-LOG BOOK | Final Project | BAZE UNIVERSITY
         </p>
-        <div className=" font-bold text-2xl text-white text-center mt-48 ">
+
+        <div className=" flex justify-center flex-col font-bold text-2xl text-black text-center mt-48 ">
+          <img src={logo} />
           Open site on Desktop
         </div>
       </div>
       <div className=" font-sans bg-[#ECEDF1]">
+        <div
+          style={{
+            backgroundImage: `url(${GlobalBG})`,
+            backgroundPosition: "bottom",
+            backgroundSize: "30em",
+          }}
+          className="w-full h-full absolute opacity-10 pointer-events-none"
+        ></div>
         <Routes>
           <Route path="/" element={<Layout />}>
-            <Route index element={<Home />} />
+            <Route index element={<Landing />} />
             <Route path="about" element={<About />} />
-            <Route path="dashboard" element={<Dashboard />} />
+            <Route path="login" element={<Login />} />
+            <Route path="register" element={<Register />} />
+            <Route path="student" element={<Student />} />
             <Route path="*" element={<NoMatch />} />
           </Route>
         </Routes>
@@ -41,8 +68,8 @@ function Layout() {
   return (
     <div className=" w-full ">
       <div className="h-[10vh]">
-        <p className="bg-black text-white text-sm py-1 pl-5">
-          ADEBOYE JACOB E-LOG BOOK | Final Project
+        <p className="bg-black text-white text-sm py-1 text-center">
+          ADEBOYE JACOB E-LOG BOOK | Final Project | BAZE UNIVERSITY
         </p>
         <header className="flex justify-center md:justify-between items-center px-10 lg:px-60">
           <img src={logo} />
@@ -53,7 +80,8 @@ function Layout() {
               <li className=" ">
                 <NavLink
                   className={({ isActive }) => {
-                    isActive && setActiveLink("home");
+                    isActive ? setActiveLink("home") : setActiveLink("NOThome");
+                    return "";
                   }}
                   to="/"
                 >
@@ -61,35 +89,32 @@ function Layout() {
                     {activeLink === "home" && (
                       <div className="w-2 h-2 bg-[#FF4A1C] rounded-2xl"></div>
                     )}
-                    <p className={activeLink === "home" && "font-bold"}>Home</p>
+                    <p className={activeLink === "home" ? "font-bold" : ""}>
+                      Home
+                    </p>
                   </div>
                 </NavLink>
               </li>
               <li className=" ">
                 <NavLink
-                  className={({ isActive }) =>
-                    isActive && setActiveLink("about")
-                  }
+                  className={({ isActive }) => {
+                    isActive && setActiveLink("about");
+                    return "";
+                  }}
                   to="/about"
                 >
                   <div className="flex flex-row items-center gap-1">
                     {activeLink === "about" && (
                       <div className="w-2 h-2 bg-[#FF4A1C] rounded-2xl"></div>
                     )}
-                    <p className={activeLink === "about" && "font-bold"}>
+                    <p className={activeLink === "about" ? "font-bold" : ""}>
                       About
                     </p>
                   </div>
                 </NavLink>
               </li>
-              <li>
-                <NavLink
-                  className=" bg-[#246C5A] rounded-md text-white py-3 px-4"
-                  to="/dashboard"
-                >
-                  Log In
-                </NavLink>
-              </li>
+
+              <Button linkTO="/login" value="Log In"></Button>
             </ul>
           </nav>
         </header>
@@ -102,52 +127,10 @@ function Layout() {
   );
 }
 
-function Home() {
-  return (
-    <div
-      style={{
-        backgroundImage: `url(${BGCircles})`,
-        backgroundSize: "contain",
-        backgroundRepeat: "no-repeat",
-        backgroundPositionX: "right",
-      }}
-      className="px-10 lg:px-60 h-[90vh] flex  flex-col justify-center"
-    >
-      <div>
-        <p className="text-[#6C6C6C] uppercase font-semibold md:text-lg pl-10">
-          Easily track <span className="text-[#FF4A1C]">Student...</span>
-        </p>
-        <div className=" capitalize font-bold md:text-5xl text-center md:text-left">
-          <span className="text-[#FF4A1C]"> progress & attendance </span>
-          <br />
-          Stay organized, set goals, <br />
-          and access feedback
-        </div>
-        <div className="flex gap-3 mt-10">
-          <button className="bg-[#246C5A] rounded-md text-white py-2 px-4">
-            Log In
-          </button>
-          <button className="bg-[#FF4A1C] rounded-md text-white py-2 px-4">
-            About
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 function About() {
   return (
     <div>
       <h2>About</h2>
-    </div>
-  );
-}
-
-function Dashboard() {
-  return (
-    <div>
-      <h2>Dashboard</h2>
     </div>
   );
 }
