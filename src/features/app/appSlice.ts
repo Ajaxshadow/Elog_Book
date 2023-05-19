@@ -4,7 +4,7 @@ import { UserCredential } from "firebase/auth";
 
 // Define a type for the slice state
 interface appState {
-  user: UserCredential;
+  user: UserCredential | null;
 }
 
 // Define the initial state using that type
@@ -20,7 +20,7 @@ export const appSlice = createSlice({
       state.user = action.payload;
     },
     logout: (state) => {
-      state.user = {} as UserCredential;
+      state.user = null;
     },
   },
 });

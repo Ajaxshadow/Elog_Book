@@ -12,6 +12,8 @@ import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   UserCredential,
+  User,
+  updateProfile,
 } from "firebase/auth";
 import db from "firebase/database";
 import { collection, doc, getFirestore, setDoc } from "firebase/firestore";
@@ -19,7 +21,9 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { login } from "../features/app/appSlice";
 import { useAppSelector, useAppDispatch } from "../app/hooks";
-interface LoginHandlerProps {
+interface RegisterHandlerProps {
+  fname: string;
+  lname: string;
   email: string;
   password: string;
 }
@@ -35,7 +39,9 @@ export default function Register() {
   );
   const [authing, setAuthing] = useState(false);
   const [registerError, setRegisterError] = useState(false);
-  const [registerData, setRegisterData] = useState<LoginHandlerProps>({
+  const [registerData, setRegisterData] = useState<RegisterHandlerProps>({
+    fname: "",
+    lname: "",
     email: "",
     password: "",
   });
@@ -46,6 +52,7 @@ export default function Register() {
     try {
       const studentRef = doc(collectionRef, data.user.uid);
       await setDoc(studentRef, {}).then(() => {
+        sessionStorage.setItem("USERDATA", data.user.uid);
         navigate("/student");
       });
     } catch (err) {
@@ -74,6 +81,12 @@ export default function Register() {
       case "password":
         setRegisterData((prev) => ({ ...prev, password: text }));
         break;
+      case "lname":
+        setRegisterData((prev) => ({ ...prev, lname: text }));
+        break;
+      case "fname":
+        setRegisterData((prev) => ({ ...prev, fname: text }));
+        break;
       default:
         break;
     }
@@ -86,9 +99,12 @@ export default function Register() {
       registerData.email,
       registerData.password
     )
-      .then((response: UserCredential) => {
-        console.log(response);
-        addStudentId(response);
+      .then((user: UserCredential) => {
+        console.log(user);
+        updateProfile(user.user, {
+          displayName: registerData.fname + " " + registerData.lname,
+        });
+        addStudentId(user);
       })
       .catch((error) => {
         console.log(error);
@@ -102,6 +118,22 @@ export default function Register() {
         <div className="bg-[#283044] overflow-hidden  z-10 relative w-fit self-center flex flex-col  gap-5 rounded-md">
           <h1 className=" text-white font-bold text-3xl m-5">Register</h1>
           <div className="p-20 pt-0 flex flex-col gap-2 items-center">
+            <input
+              onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                updateLoginData("fname", event.target.value)
+              }
+              className="bg-black/20 rounded-md py-2 px-5 w-full text-white"
+              type="text" //toyin3516@bazeuniversity.edu.ng
+              placeholder="First Name"
+            ></input>
+            <input
+              onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                updateLoginData("lname", event.target.value)
+              }
+              className="bg-black/20 rounded-md py-2 px-5 w-full text-white"
+              type="text" //toyin3516@bazeuniversity.edu.ng
+              placeholder="Last Name"
+            ></input>
             <input
               onChange={(event: ChangeEvent<HTMLInputElement>) =>
                 updateLoginData("email", event.target.value)

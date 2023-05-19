@@ -64,6 +64,7 @@ export default function Login() {
     signInWithEmailAndPassword(auth, loginData.email, loginData.password)
       .then((user: UserCredential) => {
         dispatch(login(user));
+        sessionStorage.setItem("USERDATA", JSON.stringify(user.user));
         navigate("/student");
       })
       .catch((error: any) => {

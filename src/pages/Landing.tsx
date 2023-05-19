@@ -3,10 +3,31 @@ import BGCircles from "../assets/BGCircles.svg";
 import BGBoy from "../assets/BGBoy.png";
 import AboutCircle from "../assets/AboutCircle.svg";
 import { ReactComponent as SpinCircle } from "../assets/AboutCircle.svg";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Button from "../components/Button";
+import { AiOutlineArrowRight } from "react-icons/ai";
 
 export default function Landing() {
+  // Set loading state to true initially
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Loading function to load data or
+    // fake it using setTimeout;
+    const loadData = async () => {
+      // Wait for two second
+      await new Promise((r) => setTimeout(r, 2000));
+
+      // Toggle loading state
+      setLoading((loading) => !loading);
+    };
+
+    loadData();
+  }, []);
+
+  if (loading) {
+    return <></>;
+  }
   return (
     <div
       style={{
@@ -49,6 +70,9 @@ export default function Landing() {
                 <SpinCircle className=" animate-spin-slow duration-2000 w-full h-full group-hover:animate-spin" />
                 <div className=" w-3/5 aspect-square absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#FF4A1C]/30 overflow-hidden">
                   <div className="bg-[#FF4A1C] absolute w-full h-full top-full left-0 group-hover:top-0 transition-all duration-500"></div>
+                  <div className="w-full h-full flex items-center justify-center z-50 absolute right-full group-hover:right-0 transition-all duration-500 delay-200">
+                    <AiOutlineArrowRight color="white" />
+                  </div>
                 </div>
               </div>
             </div>

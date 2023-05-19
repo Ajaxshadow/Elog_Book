@@ -5,6 +5,9 @@ import {
   Outlet,
   BrowserRouter,
   NavLink,
+  createBrowserRouter,
+  createRoutesFromElements,
+  RouterProvider,
 } from "react-router-dom";
 import logo from "./assets/Logo.svg";
 import { useState } from "react";
@@ -19,6 +22,8 @@ import { getAuth, signOut } from "firebase/auth";
 import Student from "./pages/Student";
 import Register from "./pages/Register";
 import { useAppSelector } from "./app/hooks";
+import { LayoutNoUser } from "./components/LayoutNoUser";
+import { LayoutLoggedIn } from "./components/LayoutLoggedIn";
 
 initializeApp(config.firebaseConfig);
 
@@ -46,11 +51,16 @@ export function App() {
             backgroundPosition: "bottom",
             backgroundSize: "30em",
           }}
-          className="w-full h-full absolute opacity-10 pointer-events-none"
+          className={`w-full h-full absolute ${
+            user?.user ? " opacity-5" : "opacity-10"
+          } pointer-events-none`}
         ></div>
         <Routes>
-          <Route path="/" element={<Layout />}>
-            <Route index element={<Landing />} />
+          <Route
+            path="/"
+            element={!user?.user ? <LayoutNoUser /> : <LayoutLoggedIn />}
+          >
+            <Route index element={user?.user ? <Student /> : <Landing />} />
             <Route path="about" element={<About />} />
             <Route path="login" element={<Login />} />
             <Route path="register" element={<Register />} />
@@ -60,70 +70,6 @@ export function App() {
         </Routes>
       </div>
     </BrowserRouter>
-  );
-}
-
-function Layout() {
-  const [activeLink, setActiveLink] = useState("");
-  return (
-    <div className=" w-full ">
-      <div className="h-[10vh]">
-        <p className="bg-black text-white text-sm py-1 text-center">
-          ADEBOYE JACOB E-LOG BOOK | Final Project | BAZE UNIVERSITY
-        </p>
-        <header className="flex justify-center md:justify-between items-center px-10 lg:px-60">
-          <img src={logo} />
-          {/* A "layout route" is a good place to put markup you want to
-          share across all the pages on your site, like navigation. */}
-          <nav className="hidden md:block">
-            <ul className=" flex gap-5 items-center my-10">
-              <li className=" ">
-                <NavLink
-                  className={({ isActive }) => {
-                    isActive ? setActiveLink("home") : setActiveLink("NOThome");
-                    return "";
-                  }}
-                  to="/"
-                >
-                  <div className="flex flex-row items-center gap-1">
-                    {activeLink === "home" && (
-                      <div className="w-2 h-2 bg-[#FF4A1C] rounded-2xl"></div>
-                    )}
-                    <p className={activeLink === "home" ? "font-bold" : ""}>
-                      Home
-                    </p>
-                  </div>
-                </NavLink>
-              </li>
-              <li className=" ">
-                <NavLink
-                  className={({ isActive }) => {
-                    isActive && setActiveLink("about");
-                    return "";
-                  }}
-                  to="/about"
-                >
-                  <div className="flex flex-row items-center gap-1">
-                    {activeLink === "about" && (
-                      <div className="w-2 h-2 bg-[#FF4A1C] rounded-2xl"></div>
-                    )}
-                    <p className={activeLink === "about" ? "font-bold" : ""}>
-                      About
-                    </p>
-                  </div>
-                </NavLink>
-              </li>
-
-              <Button linkTO="/login" value="Log In"></Button>
-            </ul>
-          </nav>
-        </header>
-      </div>
-      {/* An <Outlet> renders whatever child route is currently active,
-          so you can think about this <Outlet> as a placeholder for
-          the child routes we defined above. */}
-      <Outlet />
-    </div>
   );
 }
 
