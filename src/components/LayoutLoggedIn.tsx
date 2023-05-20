@@ -1,13 +1,16 @@
-import { Outlet, NavLink, Link } from "react-router-dom";
+import { Outlet, NavLink, Link, useNavigate } from "react-router-dom";
 import logo from "../assets/Logo.svg";
 import { useState } from "react";
 import Button from "./Button";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import appSlice, { login, logout } from "../features/app/appSlice";
+import { getAuth, signOut } from "firebase/auth";
 export function LayoutLoggedIn() {
   const user = useAppSelector((state) => state.app.user);
   const [activeLink, setActiveLink] = useState("");
   const dispatch = useAppDispatch();
+  const auth = getAuth();
+  const navigate = useNavigate();
 
   return (
     <div className=" w-full ">
@@ -63,7 +66,11 @@ export function LayoutLoggedIn() {
 
               <Button
                 handleClick={() => {
-                  dispatch(logout);
+                  dispatch(logout());
+                  signOut(auth).then(() => {
+                    navigate("/");
+                  });
+                  console.log(user);
                 }}
                 value="Log Out"
                 secondary

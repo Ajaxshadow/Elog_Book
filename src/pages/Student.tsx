@@ -1,6 +1,14 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { AiFillLeftCircle, AiFillRightCircle } from "react-icons/ai";
-import StudentSheet from "../components/StudentSheet";
+import StudentSheet, { WeekReport } from "../components/StudentSheet";
+import { GET_DOCUMENT } from "../hooks/firestoreHooks";
+import { useAppSelector } from "../app/hooks";
+import {
+  DocumentData,
+  DocumentSnapshot,
+  QueryDocumentSnapshot,
+} from "firebase/firestore";
+import { Console } from "console";
 
 const dates: string[] = [
   "Week 1",
@@ -15,10 +23,32 @@ const dates: string[] = [
 export default function Student() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [move, setMove] = useState(0);
+  const user = useAppSelector((state) => state.app.user);
+  const [documentData, setDocumentData] = useState<DocumentData>();
+  const [weekData, setWeekData] = useState({});
+  const getDoc = async () => {
+    if (user) {
+      const doc = await GET_DOCUMENT("students", user.user.uid);
+      if (doc?.exists()) {
+        console.log("Document data:", doc.data());
+        setDocumentData(doc.data());
+        setWeekData(doc.data().WEEKLY_PROGRESS);
+        console.log(weekData);
+      } else {
+        // docSnap.data() will be undefined in this case
+        console.log("No such document!");
+      }
+    }
+  };
+
+  useEffect(() => {
+    getDoc();
+  }, []);
+
   return (
     <div className="h-[90vh] gap-5 pt-14 flex justify-center items-center">
       <div
-        className=" cursor-pointer z-50"
+        className=" cursor-pointer z-50 group"
         onClick={() => {
           if (currentSlide <= 0) {
             setCurrentSlide(dates.length - 1);
@@ -30,17 +60,21 @@ export default function Student() {
       >
         <AiFillLeftCircle
           size={70}
-          className="text-black/40 hover:text-[#FF4A1C] transition-colors"
+          className="text-black/40 group-hover:text-[#FF4A1C] transition-colors"
         />
+        <p className="w-full text-sm font-bold group-hover:text-[#FF4A1C] transition-colors">
+          Prev Week
+        </p>
       </div>
       <div className=" w-2/6 h-full  box-border relative">
         {dates.map((date, index) => {
           return (
             <StudentSheet
+              weekData={weekData}
               dates={dates}
               date={date}
               key={index}
-              idNum={index}
+              weekID={index}
               currentIndex={currentSlide}
               move={move}
               style={{}}
@@ -49,7 +83,7 @@ export default function Student() {
         })}
       </div>
       <div
-        className=" cursor-pointer  z-50"
+        className=" cursor-pointer  z-50 group"
         onClick={() => {
           if (currentSlide >= dates.length - 1) {
             setCurrentSlide(0);
@@ -62,8 +96,11 @@ export default function Student() {
       >
         <AiFillRightCircle
           size={70}
-          className="text-black/40 hover:text-[#FF4A1C] transition-colors"
+          className="text-black/40 group-hover:text-[#FF4A1C] transition-colors"
         />
+        <p className="w-full text-sm font-bold group-hover:text-[#FF4A1C] transition-colors">
+          Next Week
+        </p>
       </div>
     </div>
   );

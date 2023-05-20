@@ -9,7 +9,7 @@ interface appState {
 
 // Define the initial state using that type
 const initialState: appState = {
-  user: {} as UserCredential,
+  user: null,
 };
 
 export const appSlice = createSlice({

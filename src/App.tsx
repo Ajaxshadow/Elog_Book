@@ -24,8 +24,7 @@ import Register from "./pages/Register";
 import { useAppSelector } from "./app/hooks";
 import { LayoutNoUser } from "./components/LayoutNoUser";
 import { LayoutLoggedIn } from "./components/LayoutLoggedIn";
-
-initializeApp(config.firebaseConfig);
+import LayoutHeader from "./components/LayoutHeader";
 
 export function App() {
   const [loggedIn, setLoggedIn] = useState({} as any);
@@ -40,7 +39,7 @@ export function App() {
         </p>
 
         <div className=" flex justify-center flex-col font-bold text-2xl text-black text-center mt-48 ">
-          <img src={logo} />
+          <img src={logo} alt="Logo" />
           Open site on Desktop
         </div>
       </div>
@@ -52,15 +51,12 @@ export function App() {
             backgroundSize: "30em",
           }}
           className={`w-full h-full absolute ${
-            user?.user ? " opacity-5" : "opacity-10"
+            user ? " opacity-5" : "opacity-10"
           } pointer-events-none`}
         ></div>
         <Routes>
-          <Route
-            path="/"
-            element={!user?.user ? <LayoutNoUser /> : <LayoutLoggedIn />}
-          >
-            <Route index element={user?.user ? <Student /> : <Landing />} />
+          <Route path="/" element={<LayoutHeader />}>
+            <Route index element={user !== null ? <Student /> : <Landing />} />
             <Route path="about" element={<About />} />
             <Route path="login" element={<Login />} />
             <Route path="register" element={<Register />} />

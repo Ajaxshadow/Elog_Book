@@ -10,8 +10,6 @@ import {
   GoogleAuthProvider,
   signInWithPopup,
   signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
-  UserCredential,
 } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../app/hooks";
@@ -62,18 +60,16 @@ export default function Login() {
   const signInWithEmail = async () => {
     setAuthing(true);
     signInWithEmailAndPassword(auth, loginData.email, loginData.password)
-      .then((user: UserCredential) => {
+      .then((user) => {
         dispatch(login(user));
-        sessionStorage.setItem("USERDATA", JSON.stringify(user.user));
-        navigate("/student");
+        // sessionStorage.setItem("USERDATA", JSON.stringify(user.user));
+        navigate("/");
       })
       .catch((error: any) => {
         setLoginError(true);
+        setAuthing(false);
         console.log(error.type);
       });
-  };
-  const createUser = async () => {
-    createUserWithEmailAndPassword(auth, loginData.email, loginData.password);
   };
   const [hidePassword, setHidePassword] = useState(true);
   return (

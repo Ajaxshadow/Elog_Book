@@ -31,7 +31,7 @@ interface RegisterHandlerProps {
 export default function Register() {
   const dispatch = useAppDispatch();
   const fireStore = getFirestore();
-  const collectionRef = collection(fireStore, "students");
+  const studentsCollectionRef = collection(fireStore, "students");
   const auth = getAuth();
   const navigate = useNavigate();
   const [userData, setUserData] = useState<UserCredential>(
@@ -50,9 +50,9 @@ export default function Register() {
     dispatch(login(data));
     setUserData(data);
     try {
-      const studentRef = doc(collectionRef, data.user.uid);
+      const studentRef = doc(studentsCollectionRef, data.user.uid);
       await setDoc(studentRef, {}).then(() => {
-        sessionStorage.setItem("USERDATA", data.user.uid);
+        // sessionStorage.setItem("USERDATA", data.user.uid);
         navigate("/student");
       });
     } catch (err) {
