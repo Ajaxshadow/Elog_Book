@@ -18,7 +18,8 @@ import { useAppDispatch } from "../app/hooks";
 
 import { login } from "../features/app/appSlice";
 import { InfinitySpin } from "react-loader-spinner";
-interface LoginHandlerProps {
+import { LOGIN_EMAIL } from "../hooks/firestoreHooks";
+export interface LoginHandlerProps {
   email: string;
   password: string;
 }
@@ -61,24 +62,29 @@ export default function Login() {
   };
   const signInWithEmail = async () => {
     setAuthing(true);
-    setPersistence(auth, browserSessionPersistence)
-      .then(() => {
-        signInWithEmailAndPassword(auth, loginData.email, loginData.password)
-          .then((user) => {
-            dispatch(login(user));
-            navigate("/");
-          })
-          .catch((error: any) => {
-            setLoginError(true);
-            setAuthing(false);
-            console.log(error.type);
-          });
-      })
-      .catch((error) => {
-        // Handle Errors here.
-        const errorCode = error.code;
-        const errorMessage = error.message;
-      });
+    // setPersistence(auth, browserSessionPersistence)
+    //   .then(() => {
+    //     signInWithEmailAndPassword(auth, loginData.email, loginData.password)
+    //       .then((user) => {
+    //         dispatch(login(user));
+    //         navigate("/");
+    //       })
+    //       .catch((error: any) => {
+    //         setLoginError(true);
+    //         setAuthing(false);
+    //         console.log(error.type);
+    //       });
+    //   })
+    //   .catch((error) => {
+    //     // Handle Errors here.
+    //     const errorCode = error.code;
+    //     const errorMessage = error.message;
+    //   });
+    const user = await LOGIN_EMAIL(loginData);
+    if (user) {
+      dispatch(login(user));
+      navigate("/");
+    }
   };
   const [hidePassword, setHidePassword] = useState(true);
 

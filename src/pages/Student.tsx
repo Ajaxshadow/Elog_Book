@@ -3,12 +3,6 @@ import { AiFillLeftCircle, AiFillRightCircle } from "react-icons/ai";
 import StudentSheet, { WeekReport } from "../components/StudentSheet";
 import { GET_DOCUMENT } from "../hooks/firestoreHooks";
 import { useAppSelector } from "../app/hooks";
-import {
-  DocumentData,
-  DocumentSnapshot,
-  QueryDocumentSnapshot,
-} from "firebase/firestore";
-import { Console } from "console";
 import { InfinitySpin } from "react-loader-spinner";
 
 const dates: string[] = [
@@ -25,16 +19,13 @@ export default function Student() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [move, setMove] = useState(0);
   const user = useAppSelector((state) => state.app.user);
-  const [documentData, setDocumentData] = useState<DocumentData>();
   const [weekData, setWeekData] = useState({});
+
   const getDoc = async () => {
     if (user) {
       const doc = await GET_DOCUMENT("students", user.user.uid);
       if (doc?.exists()) {
-        console.log("Document data:", doc.data());
-        setDocumentData(doc.data());
         setWeekData(doc.data().WEEKLY_PROGRESS);
-        console.log(weekData);
       } else {
         // docSnap.data() will be undefined in this case
         console.log("No such document!");
@@ -67,7 +58,7 @@ export default function Student() {
   }
 
   return (
-    <div className="h-[90vh] gap-5 pt-14 flex justify-center items-center">
+    <div className="h-[90vh] overflow-hidden gap-5 flex justify-center items-center">
       <div
         className=" cursor-pointer z-50 group"
         onClick={() => {
@@ -81,13 +72,13 @@ export default function Student() {
       >
         <AiFillLeftCircle
           size={70}
-          className="text-black/30 group-hover:text-[#FF4A1C] transition-colors"
+          className="text-black/10 group-hover:text-[#FF4A1C] transition-colors"
         />
         <p className="w-full text-sm font-bold group-hover:text-[#FF4A1C] transition-colors">
           Prev Week
         </p>
       </div>
-      <div className=" w-2/6 h-full  box-border relative">
+      <div className=" w-2/6 h-full pb-10 relative">
         {dates.map((date, index) => {
           return (
             <StudentSheet
@@ -117,7 +108,7 @@ export default function Student() {
       >
         <AiFillRightCircle
           size={70}
-          className="text-black/30 group-hover:text-[#FF4A1C] transition-colors"
+          className="text-black/10 group-hover:text-[#FF4A1C] transition-colors"
         />
         <p className="w-full text-sm font-bold group-hover:text-[#FF4A1C] transition-colors">
           Next Week

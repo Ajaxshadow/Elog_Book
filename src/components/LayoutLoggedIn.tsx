@@ -5,6 +5,7 @@ import Button from "./Button";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import appSlice, { login, logout } from "../features/app/appSlice";
 import { getAuth, signOut } from "firebase/auth";
+import { AiFillProfile, AiOutlineProfile, AiOutlineUser } from "react-icons/ai";
 export function LayoutLoggedIn() {
   const user = useAppSelector((state) => state.app.user);
   const [activeLink, setActiveLink] = useState("");
@@ -14,19 +15,23 @@ export function LayoutLoggedIn() {
 
   return (
     <div className=" w-full ">
-      <div className="h-[10vh]">
+      <div className="h-[10vh] flex flex-col">
         <p className="bg-black text-white text-sm py-1 text-center">
           ADEBOYE JACOB E-LOG BOOK | Final Project | BAZE UNIVERSITY
         </p>
-        <header className="flex justify-center md:justify-between items-center px-10 lg:px-60">
-          <img src={logo} />
+        <header className="flex flex-1 justify-center md:justify-between items-center px-10 lg:px-60">
+          <Link className="flex-1" to="/">
+            <img src={logo} alt="logo" />
+          </Link>
           {/* A "layout route" is a good place to put markup you want to
             share across all the pages on your site, like navigation. */}
-          <p className="font-bold text-xl text-[#FF4A1C]">
-            Welcome {user?.user && user.user.displayName?.split(" ")[0]}
-          </p>
-          <nav className="hidden md:block">
-            <ul className=" flex gap-5 items-center my-10">
+          <div className="flex-1 flex flex-row justify-center">
+            <p className="w-fit bg-white shadow-lg py-2 px-5 rounded-3xl">
+              Weekly Progress Chart
+            </p>
+          </div>
+          <nav className="hidden flex-1 md:block">
+            <ul className=" flex gap-5 items-center justify-end ">
               <li className=" ">
                 <NavLink
                   className={({ isActive }) => {
@@ -40,7 +45,7 @@ export function LayoutLoggedIn() {
                       <div className="w-2 h-2 bg-[#FF4A1C] rounded-2xl"></div>
                     )}
                     <p className={activeLink === "home" ? "font-bold" : ""}>
-                      Home
+                      Dashboard
                     </p>
                   </div>
                 </NavLink>
@@ -65,6 +70,8 @@ export function LayoutLoggedIn() {
               </li>
 
               <Button
+                square
+                className=" text-xs"
                 handleClick={() => {
                   dispatch(logout());
                   signOut(auth).then(() => {
@@ -75,6 +82,10 @@ export function LayoutLoggedIn() {
                 value="Log Out"
                 secondary
               ></Button>
+              <div className=" flex flex-col aspect-square justify-center items-center">
+                <AiOutlineUser />
+                {user?.user && user.user.displayName?.split(" ")[0]}
+              </div>
             </ul>
           </nav>
         </header>

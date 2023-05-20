@@ -53,7 +53,6 @@ export default function Register() {
     try {
       const studentRef = doc(studentsCollectionRef, data.user.uid);
       await setDoc(studentRef, {}).then(() => {
-        // sessionStorage.setItem("USERDATA", data.user.uid);
         navigate("/student");
       });
     } catch (err) {

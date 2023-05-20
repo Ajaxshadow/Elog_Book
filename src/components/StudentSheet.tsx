@@ -160,7 +160,7 @@ export default function StudentSheet(props: StudentSheetProps) {
             className="bg-[#EEEEEF] font-sans flex-1 p-2 focus:outline-none group-hover:border-r-[#FF4A1C] group-hover:border-b-[#FF4A1C] group-hover:border-t-[#FF4A1C] rounded-r-lg group-hover:border-2 group-hover:border-l-0 placeholder:text-center"
           ></textarea>
         </div>
-        <div className="dayBlock h-1/5 w-full  flex flex-row gap-3 transition-all duration-1000 hover:h-full group">
+        <div className="dayBlock h-1/5 w-full  flex flex-row gap-3 transition-all gpu duration-1000 hover:h-full group">
           <div className="dayBlock h-full w-40 bg-[#EEEEEF] grid place-items-center font-bold group-hover:border-2 group-hover:border-r-0 group-hover:border-t-[#FF4A1C] group-hover:border-l-[#FF4A1C] group-hover:border-b-[#FF4A1C] rounded-l-lg  cursor-pointer group-hover:bg-[#FF4A1C]/10 transition-all text-black/70">
             Friday
           </div>

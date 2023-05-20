@@ -6,16 +6,16 @@ export function LayoutNoUser() {
   const [activeLink, setActiveLink] = useState("");
   return (
     <div className=" w-full ">
-      <div className="h-[10vh]">
+      <div className="h-[10vh] flex flex-col">
         <p className="bg-black text-white text-sm py-1 text-center">
           ADEBOYE JACOB E-LOG BOOK | Final Project | BAZE UNIVERSITY
         </p>
-        <header className="flex justify-center md:justify-between items-center px-10 lg:px-60">
+        <header className="flex flex-1 justify-center md:justify-between items-center px-10 lg:px-60">
           <img src={logo} />
           {/* A "layout route" is a good place to put markup you want to
             share across all the pages on your site, like navigation. */}
           <nav className="hidden md:block">
-            <ul className=" flex gap-5 items-center my-10">
+            <ul className=" flex gap-5 items-center">
               <li className=" ">
                 <NavLink
                   className={({ isActive }) => {

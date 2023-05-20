@@ -1,4 +1,10 @@
-import { UserCredential } from "firebase/auth";
+import {
+  UserCredential,
+  browserSessionPersistence,
+  getAuth,
+  setPersistence,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
 import {
   DocumentData,
   WithFieldValue,
@@ -11,10 +17,25 @@ import {
 import { WeekReport } from "../components/StudentSheet";
 import { initializeApp } from "firebase/app";
 import { config } from "../firebaseConfig/config";
+import { login } from "../features/app/appSlice";
+import { useAppDispatch } from "../app/hooks";
+import { useNavigate } from "react-router-dom";
+import { LoginHandlerProps } from "../pages/Login";
 
 initializeApp(config.firebaseConfig);
 const fireStore = getFirestore();
 const studentsCollectionRef = collection(fireStore, "students");
+const auth = getAuth();
+
+export const LOGIN_EMAIL = async (loginData: LoginHandlerProps) => {
+  return setPersistence(auth, browserSessionPersistence).then((res) => {
+    return signInWithEmailAndPassword(
+      auth,
+      loginData.email,
+      loginData.password
+    );
+  });
+};
 
 export const GET_DOCUMENT = async (collection: string, document: string) => {
   const docRef = doc(fireStore, collection, document);

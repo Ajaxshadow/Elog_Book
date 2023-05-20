@@ -10,24 +10,27 @@ type ButtonProps = {
   secondary?: boolean;
   slimmer?: boolean;
   loading?: boolean;
+  square?: boolean;
   Right?: React.ElementType | null;
   handleClick?: React.MouseEventHandler<HTMLAnchorElement>;
 } & React.HTMLAttributes<HTMLDivElement>;
 function Button({
   linkTO = "",
   value,
+  square,
   loading,
   secondary = false,
   slimmer = false,
   Right,
   handleClick,
+  className,
 }: ButtonProps) {
   return (
-    <Link onClick={handleClick} to={linkTO}>
+    <Link className={className} onClick={handleClick} to={linkTO}>
       <div
-        className={`w-fit relative flex flex-row items-center gap-2 text-white px-5 ${
-          slimmer ? "py-1" : "py-3"
-        } rounded-md overflow-hidden group ${
+        className={`self-center w-fit relative flex flex-row items-center gap-2 text-white 
+        ${square ? "py-2 px-2" : "px-5 "}
+        ${slimmer ? "py-1" : "py-3"} rounded-md overflow-hidden group ${
           secondary ? "bg-[#FF4A1C]" : "bg-[#246C5A]"
         }`}
       >
