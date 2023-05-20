@@ -6,6 +6,7 @@ import { ReactComponent as SpinCircle } from "../assets/AboutCircle.svg";
 import React, { useEffect, useState } from "react";
 import Button from "../components/Button";
 import { AiOutlineArrowRight } from "react-icons/ai";
+import { InfinitySpin } from "react-loader-spinner";
 
 export default function Landing() {
   // Set loading state to true initially
@@ -26,7 +27,11 @@ export default function Landing() {
   }, []);
 
   if (loading) {
-    return <></>;
+    return (
+      <div className=" w-full h-[90vh] grid place-items-center">
+        <InfinitySpin color="#FF4A1C" />
+      </div>
+    );
   }
   return (
     <div

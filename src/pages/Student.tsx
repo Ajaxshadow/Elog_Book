@@ -9,6 +9,7 @@ import {
   QueryDocumentSnapshot,
 } from "firebase/firestore";
 import { Console } from "console";
+import { InfinitySpin } from "react-loader-spinner";
 
 const dates: string[] = [
   "Week 1",
@@ -41,9 +42,29 @@ export default function Student() {
     }
   };
 
+  // Set loading state to true initially
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
     getDoc();
+    // Loading function to load data or
+    // fake it using setTimeout;
+    const loadData = async () => {
+      // Wait for two second
+      await new Promise((r) => setTimeout(r, 2000));
+
+      // Toggle loading state
+      setLoading((loading) => !loading);
+    };
+
+    loadData();
   }, []);
+  if (loading) {
+    return (
+      <div className=" w-full h-[90vh] grid place-items-center">
+        <InfinitySpin color="#FF4A1C" />
+      </div>
+    );
+  }
 
   return (
     <div className="h-[90vh] gap-5 pt-14 flex justify-center items-center">
@@ -60,7 +81,7 @@ export default function Student() {
       >
         <AiFillLeftCircle
           size={70}
-          className="text-black/40 group-hover:text-[#FF4A1C] transition-colors"
+          className="text-black/30 group-hover:text-[#FF4A1C] transition-colors"
         />
         <p className="w-full text-sm font-bold group-hover:text-[#FF4A1C] transition-colors">
           Prev Week
@@ -96,7 +117,7 @@ export default function Student() {
       >
         <AiFillRightCircle
           size={70}
-          className="text-black/40 group-hover:text-[#FF4A1C] transition-colors"
+          className="text-black/30 group-hover:text-[#FF4A1C] transition-colors"
         />
         <p className="w-full text-sm font-bold group-hover:text-[#FF4A1C] transition-colors">
           Next Week

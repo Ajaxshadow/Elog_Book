@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useState } from "react";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import {
   AiFillEye,
   AiFillEyeInvisible,
@@ -10,11 +10,14 @@ import {
   GoogleAuthProvider,
   signInWithPopup,
   signInWithEmailAndPassword,
+  setPersistence,
+  browserSessionPersistence,
 } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../app/hooks";
 
 import { login } from "../features/app/appSlice";
+import { InfinitySpin } from "react-loader-spinner";
 interface LoginHandlerProps {
   email: string;
   password: string;
@@ -55,23 +58,55 @@ export default function Login() {
       default:
         break;
     }
-    console.log(JSON.stringify(loginData));
   };
   const signInWithEmail = async () => {
     setAuthing(true);
-    signInWithEmailAndPassword(auth, loginData.email, loginData.password)
-      .then((user) => {
-        dispatch(login(user));
-        // sessionStorage.setItem("USERDATA", JSON.stringify(user.user));
-        navigate("/");
+    setPersistence(auth, browserSessionPersistence)
+      .then(() => {
+        signInWithEmailAndPassword(auth, loginData.email, loginData.password)
+          .then((user) => {
+            dispatch(login(user));
+            navigate("/");
+          })
+          .catch((error: any) => {
+            setLoginError(true);
+            setAuthing(false);
+            console.log(error.type);
+          });
       })
-      .catch((error: any) => {
-        setLoginError(true);
-        setAuthing(false);
-        console.log(error.type);
+      .catch((error) => {
+        // Handle Errors here.
+        const errorCode = error.code;
+        const errorMessage = error.message;
       });
   };
   const [hidePassword, setHidePassword] = useState(true);
+
+  // Set loading state to true initially
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Loading function to load data or
+    // fake it using setTimeout;
+    const loadData = async () => {
+      // Wait for two second
+      await new Promise((r) => setTimeout(r, 2000));
+
+      // Toggle loading state
+      setLoading((loading) => !loading);
+    };
+
+    loadData();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className=" w-full h-[90vh] grid place-items-center">
+        <InfinitySpin color="#FF4A1C" />
+      </div>
+    );
+  }
+
   return (
     <div className=" pt-20 w-screen h-[90vh] flex ">
       <div className="bg-[#283044] w-1/2 h-full ">Hello</div>

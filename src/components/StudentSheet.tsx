@@ -30,6 +30,7 @@ type dbWeek = {
 
 export default function StudentSheet(props: StudentSheetProps) {
   const [weekSaved, setWeekSaved] = useState(false);
+  const [DBhasData, setDBhasData] = useState(false);
   const [weekReport, setWeekReport] = useState<WeekReport>({
     weekID: props.weekID + 1,
     monday: "",
@@ -44,6 +45,7 @@ export default function StudentSheet(props: StudentSheetProps) {
       let id: number = Number.parseInt(weekData[0].split("_")[1]);
       let data: WeekReport = weekData[1];
       if (props.weekID + 1 === id) {
+        setDBhasData(true);
         setWeekReport(data);
       }
     });
@@ -99,7 +101,7 @@ export default function StudentSheet(props: StudentSheetProps) {
         </div>
         <Button
           handleClick={saveWeekData}
-          value={weekSaved ? "Saved!" : "Save"}
+          value={weekSaved ? "Saved!" : DBhasData ? "Update" : "Save"}
           Right={weekSaved ? AiFillCheckCircle : null}
         />
       </div>
