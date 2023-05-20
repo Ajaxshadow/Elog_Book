@@ -10,7 +10,7 @@ import {
   RouterProvider,
 } from "react-router-dom";
 import logo from "./assets/Logo.svg";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Landing from "./pages/Landing";
 import React from "react";
 import Button from "./components/Button";
@@ -21,24 +21,34 @@ import { config } from "./firebaseConfig/config";
 import { getAuth, signOut } from "firebase/auth";
 import Student from "./pages/Student";
 import Register from "./pages/Register";
-import { useAppSelector } from "./app/hooks";
+import { useAppDispatch, useAppSelector } from "./app/hooks";
 import { LayoutNoUser } from "./components/LayoutNoUser";
 import { LayoutLoggedIn } from "./components/LayoutLoggedIn";
 import LayoutHeader from "./components/LayoutHeader";
+import { setUser } from "./features/app/appSlice";
 
 export function App() {
   const [loggedIn, setLoggedIn] = useState({} as any);
 
   const user = useAppSelector((state) => state.app.user);
+  const auth = getAuth();
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      dispatch(setUser(user));
+    });
+    return unsubscribe;
+  }, [dispatch]);
 
   return (
     <BrowserRouter>
-      <div className="w-screen h-screen absolute bg-rose-100 md:hidden z-50">
+      <div className="w-screen h-screen absolute bg-zinc-800 md:hidden z-[99]">
         <p className=" bg-black text-white text-sm py-1 text-center">
           ADEBOYE JACOB E-LOG BOOK | Final Project | BAZE UNIVERSITY
         </p>
 
-        <div className=" flex justify-center flex-col font-bold text-2xl text-black text-center mt-48 ">
+        <div className=" flex justify-center flex-col font-bold text-2xl text-white text-center mt-48 ">
           <img src={logo} alt="Logo" />
           Open site on Desktop
         </div>

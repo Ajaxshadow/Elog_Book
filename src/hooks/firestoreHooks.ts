@@ -1,4 +1,5 @@
 import {
+  User,
   UserCredential,
   browserSessionPersistence,
   getAuth,
@@ -50,12 +51,9 @@ export const GET_DOCUMENT = async (collection: string, document: string) => {
   }
 };
 
-export const SAVE_WEEK_TO_DB = async (
-  dataToSave: WeekReport,
-  user: UserCredential
-) => {
+export const SAVE_WEEK_TO_DB = async (dataToSave: WeekReport, user: User) => {
   try {
-    const studentRef = doc(studentsCollectionRef, user.user.uid);
+    const studentRef = doc(studentsCollectionRef, user.uid);
     const WeekHeader = "Week_" + dataToSave.weekID;
     await setDoc(
       studentRef,
@@ -65,6 +63,22 @@ export const SAVE_WEEK_TO_DB = async (
       { merge: true }
     ).then(() => {
       console.log("Saved!!!");
+    });
+  } catch (err) {
+    console.log(err);
+  }
+};
+export const SAVE_PARTICULARS = async (dataToSave: Object, user: User) => {
+  try {
+    const studentRef = doc(studentsCollectionRef, user.uid);
+    await setDoc(
+      studentRef,
+      {
+        PARTICULARS: dataToSave,
+      },
+      { merge: true }
+    ).then(() => {
+      console.log("Saved!!! PARTICULARS");
     });
   } catch (err) {
     console.log(err);

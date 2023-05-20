@@ -12,11 +12,12 @@ import {
   signInWithEmailAndPassword,
   setPersistence,
   browserSessionPersistence,
+  getAdditionalUserInfo,
 } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../app/hooks";
 
-import { login } from "../features/app/appSlice";
+import { login, setFirstTime } from "../features/app/appSlice";
 import { InfinitySpin } from "react-loader-spinner";
 import { LOGIN_EMAIL } from "../hooks/firestoreHooks";
 export interface LoginHandlerProps {
@@ -80,9 +81,15 @@ export default function Login() {
     //     const errorCode = error.code;
     //     const errorMessage = error.message;
     //   });
-    const user = await LOGIN_EMAIL(loginData);
+    const user = await LOGIN_EMAIL(loginData).catch((error) => {
+      setLoginError(true);
+      setAuthing(false);
+      console.log(error);
+    });
     if (user) {
-      dispatch(login(user));
+      const newUser = getAdditionalUserInfo(user)?.isNewUser;
+      dispatch(setFirstTime(newUser));
+      dispatch(login(user.user));
       navigate("/");
     }
   };

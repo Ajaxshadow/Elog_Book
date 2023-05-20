@@ -13,7 +13,7 @@ type ButtonProps = {
   square?: boolean;
   Right?: React.ElementType | null;
   handleClick?: React.MouseEventHandler<HTMLAnchorElement>;
-} & React.HTMLAttributes<HTMLDivElement>;
+} & React.HTMLAttributes<HTMLButtonElement>;
 function Button({
   linkTO = "",
   value,

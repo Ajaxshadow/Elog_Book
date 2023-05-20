@@ -4,6 +4,7 @@ import StudentSheet, { WeekReport } from "../components/StudentSheet";
 import { GET_DOCUMENT } from "../hooks/firestoreHooks";
 import { useAppSelector } from "../app/hooks";
 import { InfinitySpin } from "react-loader-spinner";
+import Particulars from "../components/Particulars";
 
 const dates: string[] = [
   "Week 1",
@@ -19,11 +20,14 @@ export default function Student() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [move, setMove] = useState(0);
   const user = useAppSelector((state) => state.app.user);
+  const doneParticulars = useAppSelector(
+    (state) => state.app.particularsSubmited
+  );
+  const firstTime = useAppSelector((state) => state.app.firstTime);
   const [weekData, setWeekData] = useState({});
-
   const getDoc = async () => {
     if (user) {
-      const doc = await GET_DOCUMENT("students", user.user.uid);
+      const doc = await GET_DOCUMENT("students", user.uid);
       if (doc?.exists()) {
         setWeekData(doc.data().WEEKLY_PROGRESS);
       } else {
@@ -59,6 +63,7 @@ export default function Student() {
 
   return (
     <div className="h-[90vh] overflow-hidden gap-5 flex justify-center items-center">
+      {firstTime && <Particulars />}
       <div
         className=" cursor-pointer z-50 group"
         onClick={() => {

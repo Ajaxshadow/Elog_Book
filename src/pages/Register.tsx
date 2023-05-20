@@ -19,7 +19,7 @@ import db from "firebase/database";
 import { collection, doc, getFirestore, setDoc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { login } from "../features/app/appSlice";
+import { login, setFirstTime } from "../features/app/appSlice";
 import { useAppSelector, useAppDispatch } from "../app/hooks";
 import { InfinitySpin } from "react-loader-spinner";
 interface RegisterHandlerProps {
@@ -35,9 +35,7 @@ export default function Register() {
   const studentsCollectionRef = collection(fireStore, "students");
   const auth = getAuth();
   const navigate = useNavigate();
-  const [userData, setUserData] = useState<UserCredential>(
-    {} as UserCredential
-  );
+  const [userData, setUserData] = useState<User>({} as User);
   const [authing, setAuthing] = useState(false);
   const [registerError, setRegisterError] = useState(false);
   const [registerData, setRegisterData] = useState<RegisterHandlerProps>({
@@ -47,11 +45,12 @@ export default function Register() {
     password: "",
   });
 
-  const addStudentId = async (data: UserCredential) => {
+  const addStudentId = async (data: User) => {
     dispatch(login(data));
+    dispatch(setFirstTime(true));
     setUserData(data);
     try {
-      const studentRef = doc(studentsCollectionRef, data.user.uid);
+      const studentRef = doc(studentsCollectionRef, data.uid);
       await setDoc(studentRef, {}).then(() => {
         navigate("/student");
       });
@@ -90,7 +89,6 @@ export default function Register() {
       default:
         break;
     }
-    console.log(JSON.stringify(registerData));
   };
 
   const createUser = async () => {
@@ -99,12 +97,12 @@ export default function Register() {
       registerData.email,
       registerData.password
     )
-      .then((user: UserCredential) => {
+      .then((user) => {
         console.log(user);
         updateProfile(user.user, {
           displayName: registerData.fname + " " + registerData.lname,
         });
-        addStudentId(user);
+        addStudentId(user.user);
       })
       .catch((error) => {
         console.log(error);

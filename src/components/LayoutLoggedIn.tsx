@@ -84,7 +84,7 @@ export function LayoutLoggedIn() {
               ></Button>
               <div className=" flex flex-col aspect-square justify-center items-center">
                 <AiOutlineUser />
-                {user?.user && user.user.displayName?.split(" ")[0]}
+                {user && user.displayName?.split(" ")[0]}
               </div>
             </ul>
           </nav>

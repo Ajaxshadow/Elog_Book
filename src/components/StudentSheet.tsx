@@ -40,15 +40,25 @@ export default function StudentSheet(props: StudentSheetProps) {
     friday: "",
   });
 
-  useEffect(() => {
-    Object.entries(props.weekData).forEach((weekData) => {
-      let id: number = Number.parseInt(weekData[0].split("_")[1]);
-      let data: WeekReport = weekData[1];
-      if (props.weekID + 1 === id) {
-        setDBhasData(true);
-        setWeekReport(data);
+  const checkWeekReport=()=>{
+    Object.entries(weekReport).forEach((day)=>{
+      if (day[0]!=="weekID"){
+        
       }
-    });
+    })
+  }
+
+  useEffect(() => {
+    if (props.weekData) {
+      Object.entries(props.weekData).forEach((weekData) => {
+        let id: number = Number.parseInt(weekData[0].split("_")[1]);
+        let data: WeekReport = weekData[1];
+        if (props.weekID + 1 === id) {
+          setDBhasData(true);
+          setWeekReport(data);
+        }
+      });
+    }
   }, [props.weekData]);
 
   const handleTextAreaChange = (
