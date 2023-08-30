@@ -7,6 +7,8 @@ import React, { useEffect, useState } from "react";
 import Button from "../components/Button";
 import { AiOutlineArrowRight } from "react-icons/ai";
 import { InfinitySpin } from "react-loader-spinner";
+import WeekSheetMotion from "../components/WeekSheetMotion";
+import { motion } from "framer-motion";
 
 export default function Landing() {
   // Set loading state to true initially

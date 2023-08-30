@@ -1,10 +1,12 @@
 import { configureStore } from "@reduxjs/toolkit";
 import appReducer from "../features/app/appSlice";
+import particularsReducer from "../features/particulars/particularsSlice";
 // ...
 
 export const store = configureStore({
   reducer: {
     app: appReducer,
+    particulars:particularsReducer
   },
 });
 

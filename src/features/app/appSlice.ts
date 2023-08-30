@@ -6,23 +6,18 @@ import { User, UserCredential } from "firebase/auth";
 interface appState {
   user: User | null;
   firstTime: boolean | undefined;
-  particularsSubmited: boolean;
 }
 
 // Define the initial state using that type
 const initialState: appState = {
   user: null,
   firstTime: false,
-  particularsSubmited: false,
 };
 
 export const appSlice = createSlice({
   name: "app",
   initialState,
   reducers: {
-    setParticularsSubmited: (state, action: PayloadAction<boolean>) => {
-      state.particularsSubmited = action.payload;
-    },
     setFirstTime: (state, action: PayloadAction<boolean | undefined>) => {
       state.firstTime = action.payload;
     },
@@ -40,7 +35,7 @@ export const appSlice = createSlice({
 });
 
 // Action creators are generated for each case reducer function
-export const { login, logout, setFirstTime, setUser, setParticularsSubmited } =
+export const { login, logout, setFirstTime, setUser } =
   appSlice.actions;
 export const selectUser = (state: RootState) => state.app.user;
 export default appSlice.reducer;

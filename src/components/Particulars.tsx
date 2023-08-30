@@ -1,15 +1,38 @@
-import React from "react";
+import React, { ChangeEventHandler, useState } from "react";
 import Button from "./Button";
 import { Formik } from "formik";
 import { SAVE_PARTICULARS } from "../hooks/firestoreHooks";
 import { useAppSelector } from "../app/hooks";
 import { useDispatch } from "react-redux";
-import { setFirstTime, setParticularsSubmited } from "../features/app/appSlice";
+import { setParticulars } from "../features/particulars/particularsSlice";
+import { ParticularsInterface } from "../interface/particulars";
+
+type CustomRadio = {
+  label: string;
+  onChange: ChangeEventHandler<HTMLInputElement>;
+};
+
+const CustomRadio = () => {};
 
 export default function Particulars() {
   const user = useAppSelector((state) => state.app.user);
   const dispatch = useDispatch();
-
+  const [sex, setSex] = useState("");
+  const [Done, setDone] = useState(false);
+  const formFields: ParticularsInterface = {
+    courseOfStudy: "",
+    registrationNumber: "",
+    yearOfCourse: "",
+    nameOfCompany: "",
+    siwes1: "",
+    siwes2: "",
+    companyAddress: "",
+    sex: "",
+    startDate: "",
+  };
+  if (Done) {
+    return <></>;
+  }
   return (
     <div className="firstTime w-full h-full grid place-items-center absolute top-0 left-0 z-50 bg-black/20">
       <div className="firstCont bg-white shadow-xl p-10 rounded-xl">
@@ -21,19 +44,11 @@ export default function Particulars() {
           <span className="text-[#FF4A1C]">information</span> about you...
         </p>
         <Formik
-          initialValues={{
-            courseOfStudy: "",
-            registrationNumber: "",
-            yearOfCourse: "",
-            nameOfCompany: "",
-            siwes1: "",
-            siwes2: "",
-            companyAddress: "",
-          }}
+          initialValues={formFields}
           validate={(values) => {
             const errors: any = {};
             Object.entries(values).forEach((value) => {
-              if (!value[1]) {
+              if (!value[1] && value[0] !== "startDate") {
                 errors[value[0]] = "Required";
               }
             });
@@ -42,10 +57,13 @@ export default function Particulars() {
           }}
           onSubmit={(values, { setSubmitting }) => {
             setTimeout(() => {
+              console.log(values);
               if (user) {
                 SAVE_PARTICULARS(values, user).then(() => {
-                  dispatch(setFirstTime(false));
+                  // dispatch(setParticularsSubmited(true))
+                  values && dispatch(setParticulars(values));
                   setSubmitting(false);
+                  setDone(true);
                 });
               }
             }, 400);
@@ -59,9 +77,26 @@ export default function Particulars() {
             handleBlur,
             handleSubmit,
             isSubmitting,
+            setFieldValue,
             /* and other goodies */
           }) => (
             <form className=" flex flex-col gap-3">
+              <div>
+                <div className=" text-red-400 font-bold text-sm flex flex-row gap-1">
+                  <span className="text-black font-light">
+                    Internship Start Date
+                  </span>
+                </div>
+                <input
+                  name="startDate"
+                  className="w-full bg-black/5 rounded-l-md py-2 px-5 placeholder:text-black/50 text-black"
+                  type="date"
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  value={values.startDate}
+                  placeholder="Start Date"
+                />
+              </div>
               <div>
                 <div className=" text-red-400 font-bold text-sm flex flex-row gap-1">
                   <span className="text-black font-light">Course of study</span>
@@ -169,12 +204,35 @@ export default function Particulars() {
                 </div>
               </div>
               <div className="sexCheck">
-                <p>Sex</p>
+                <div className=" text-red-400 font-bold text-sm flex flex-row gap-1">
+                  <span className="text-black font-light">Sex</span>
+                  {errors.sex && errors.sex}
+                </div>
                 <div className="flex flex-row gap-2">
-                  <div className="male w-7 h-7 bg text-white bg-black/20 text-center cursor-pointer hover:bg-black/50 transition-colors rounded-md grid place-items-center ">
+                  <div
+                    onClick={() => {
+                      setSex("male");
+                      setFieldValue("sex", "male");
+                    }}
+                    className={`male w-7 h-7 bg font-bold text-center cursor-pointer  transition-colors rounded-md grid place-items-center ${
+                      sex === "male"
+                        ? "bg-[#FF4A1C] text-white"
+                        : "bg-black/5 text-black/50 hover:bg-black/20"
+                    }`}
+                  >
                     <span>M</span>
                   </div>
-                  <div className="female w-7 h-7 bg text-white bg-black/20 text-center cursor-pointer hover:bg-black/50 transition-colors rounded-md grid place-items-center ">
+                  <div
+                    onClick={() => {
+                      setSex("female");
+                      setFieldValue("sex", "female");
+                    }}
+                    className={`male w-7 h-7 font-bold text-center cursor-pointer  transition-colors rounded-md grid place-items-center ${
+                      sex === "female"
+                        ? "bg-[#FF4A1C] text-white"
+                        : "bg-black/5 text-black/50 hover:bg-black/20 "
+                    }`}
+                  >
                     <span>F</span>
                   </div>
                 </div>

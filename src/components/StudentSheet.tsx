@@ -1,9 +1,11 @@
-import { current } from "@reduxjs/toolkit";
-import React, { ChangeEventHandler, useEffect, useState } from "react";
+import React, { ChangeEventHandler, useEffect, useRef, useState } from "react";
+
+import { AiFillCheckCircle } from "react-icons/ai";
 import Button from "./Button";
 import { SAVE_WEEK_TO_DB } from "../hooks/firestoreHooks";
+import WeekSheetMotion from "./WeekSheetMotion";
+import { current } from "@reduxjs/toolkit";
 import { useAppSelector } from "../app/hooks";
-import { AiFillCheckCircle } from "react-icons/ai";
 
 type StudentSheetProps = {
   dates: string[];
@@ -12,6 +14,7 @@ type StudentSheetProps = {
   weekID: number;
   move: number;
   weekData: Object;
+  startDate: string;
 } & React.HTMLAttributes<HTMLDivElement>;
 
 export type WeekReport = {
@@ -21,6 +24,7 @@ export type WeekReport = {
   wednesday: string;
   thursday: string;
   friday: string;
+  startDate: string;
 };
 
 type dbWeek = {
@@ -29,8 +33,11 @@ type dbWeek = {
 };
 
 export default function StudentSheet(props: StudentSheetProps) {
+  const weekDate = new Date(props.startDate);
+
   const [weekSaved, setWeekSaved] = useState(false);
   const [DBhasData, setDBhasData] = useState(false);
+  const [weekDataEdited, setWeekDataEdited] = useState(false);
   const [weekReport, setWeekReport] = useState<WeekReport>({
     weekID: props.weekID + 1,
     monday: "",
@@ -38,15 +45,32 @@ export default function StudentSheet(props: StudentSheetProps) {
     wednesday: "",
     thursday: "",
     friday: "",
+    startDate: "",
   });
 
-  const checkWeekReport=()=>{
-    Object.entries(weekReport).forEach((day)=>{
-      if (day[0]!=="weekID"){
-        
-      }
-    })
-  }
+  const [height, setHeight] = useState(0);
+  const ref = useRef<HTMLDivElement>(null);
+
+  const [height2, setHeight2] = useState(0);
+  const [heightNew, setHeightNew] = useState(0);
+  const ref2 = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    console.log(props.startDate);
+    console.log(weekDate);
+    if (ref.current !== null && ref2.current !== null) {
+      const height1 = ref.current.offsetHeight;
+      const height2 = ref2.current.offsetHeight;
+
+      setHeight(ref.current.offsetHeight);
+      setHeight2(ref2.current.offsetHeight);
+
+      const newHeight = ref.current.offsetHeight - ref2.current.offsetHeight;
+      setHeightNew(newHeight);
+
+      console.log({ heightNew });
+    }
+  }, []);
 
   useEffect(() => {
     if (props.weekData) {
@@ -67,23 +91,33 @@ export default function StudentSheet(props: StudentSheetProps) {
     setWeekSaved(false);
     const name = event.target.name;
     const text = event.target.value;
+    setWeekDataEdited(true);
     setWeekReport((prev) => ({
       ...prev,
       [name]: text,
     }));
+
+    // console.log(weekReport);
   };
   const user = useAppSelector((state) => state.app.user);
   const saveWeekData = () => {
     // console.log(idString);
     user &&
       SAVE_WEEK_TO_DB(weekReport, user)
-        .then(() => setWeekSaved(true))
+        .then(() => {
+          setWeekSaved(true);
+          setTimeout(() => {
+            setWeekSaved(false);
+            setWeekDataEdited(false);
+          }, 1000);
+        })
         .catch((err) => console.log(err));
   };
   return (
     <div
+      ref={ref}
       style={props.style}
-      className={` 
+      className={` StudentSheet
       ${
         props.weekID === props.currentIndex
           ? "opacity-100"
@@ -100,89 +134,41 @@ export default function StudentSheet(props: StudentSheetProps) {
       }
       
      
-      rounded-t-2xl h-full w-full shadow-lg opacity-0  transition-all duration-[500ms] flex flex-col bg-white/80 absolute`}
+       rounded-t-2xl h-full w-full shadow-lg opacity-0  transition-all duration-[500ms] flex flex-col bg-white/80 absolute`}
     >
-      <div className="m-5 mb-0 pb-3 border-b-[1px] border-dotted border-black/60 flex flex-row items-center justify-between">
-        <div>
-          <p className=" font-bold text-black/60 text-4xl">{props.date}</p>
-          <p className="text-sm text-black/50 font-medium pl-2">
-            Week {props.weekID + 1} of {props.dates.length}
-          </p>
+      <div ref={ref2} className=" h-fit">
+        <div className="p-5 mb-0 pb-3 border-b-[1px] border-dotted border-black/60 flex flex-row items-center justify-between">
+          <div className="flex-1">
+            <p className=" font-bold text-black/60 text-4xl">{props.date}</p>
+            <p className="text-sm text-black/50 font-medium pl-2">
+              Week {props.weekID + 1} of {props.dates.length}
+            </p>
+          </div>
+          <div className="flex-1"></div>
+          <div className="flex-1 flex justify-end">
+            <Button
+              handleClick={saveWeekData}
+              value={
+                weekSaved
+                  ? "Saved!"
+                  : DBhasData && weekDataEdited
+                  ? "Update"
+                  : "Save"
+              }
+              Right={weekSaved ? AiFillCheckCircle : null}
+            />
+          </div>
         </div>
-        <Button
-          handleClick={saveWeekData}
-          value={weekSaved ? "Saved!" : DBhasData ? "Update" : "Save"}
-          Right={weekSaved ? AiFillCheckCircle : null}
-        />
       </div>
 
-      <div className="container w-full flex-1 flex flex-col p-3 gap-3">
-        <div className="dayBlock h-1/5 w-full  flex flex-row gap-3 transition-all duration-1000 hover:h-full group">
-          <div className="dayBlock h-full w-40 bg-[#EEEEEF] grid place-items-center font-bold group-hover:border-2 group-hover:border-r-0 group-hover:border-t-[#FF4A1C] group-hover:border-l-[#FF4A1C] group-hover:border-b-[#FF4A1C] rounded-l-lg  cursor-pointer group-hover:bg-[#FF4A1C]/10 transition-all text-black/70">
-            Monday
-          </div>
-          <textarea
-            onChange={handleTextAreaChange}
-            name="monday"
-            value={weekReport.monday}
-            placeholder="Description of Work-Done on Monday"
-            style={{ resize: "none" }}
-            className="bg-[#EEEEEF] font-sans flex-1 p-2 focus:outline-none group-hover:border-r-[#FF4A1C] group-hover:border-b-[#FF4A1C] group-hover:border-t-[#FF4A1C] rounded-r-lg group-hover:border-2 group-hover:border-l-0 placeholder:text-center"
-          ></textarea>
-        </div>
-        <div className="dayBlock h-1/5 w-full  flex flex-row gap-3 transition-all duration-1000 hover:h-full group">
-          <div className="dayBlock h-full w-40 bg-[#EEEEEF] grid place-items-center font-bold group-hover:border-2 group-hover:border-r-0 group-hover:border-t-[#FF4A1C] group-hover:border-l-[#FF4A1C] group-hover:border-b-[#FF4A1C] rounded-l-lg  cursor-pointer group-hover:bg-[#FF4A1C]/10 transition-all text-black/70">
-            Tuesday
-          </div>
-          <textarea
-            onChange={handleTextAreaChange}
-            name="tuesday"
-            value={weekReport.tuesday}
-            placeholder="Description of Work-Done on Tuesday"
-            style={{ resize: "none" }}
-            className="bg-[#EEEEEF] font-sans flex-1 p-2 focus:outline-none group-hover:border-r-[#FF4A1C] group-hover:border-b-[#FF4A1C] group-hover:border-t-[#FF4A1C] rounded-r-lg group-hover:border-2 group-hover:border-l-0 placeholder:text-center"
-          ></textarea>
-        </div>
-        <div className="dayBlock h-1/5 w-full  flex flex-row gap-3 transition-all duration-1000 hover:h-full group">
-          <div className="dayBlock h-full w-40 bg-[#EEEEEF] grid place-items-center font-bold group-hover:border-2 group-hover:border-r-0 group-hover:border-t-[#FF4A1C] group-hover:border-l-[#FF4A1C] group-hover:border-b-[#FF4A1C] rounded-l-lg  cursor-pointer group-hover:bg-[#FF4A1C]/10 transition-all text-black/70">
-            Wednesday
-          </div>
-
-          <textarea
-            onChange={handleTextAreaChange}
-            name="wednesday"
-            value={weekReport.wednesday}
-            placeholder="Description of Work-Done on Wednesday"
-            style={{ resize: "none" }}
-            className="bg-[#EEEEEF] font-sans flex-1 p-2 focus:outline-none group-hover:border-r-[#FF4A1C] group-hover:border-b-[#FF4A1C] group-hover:border-t-[#FF4A1C] rounded-r-lg group-hover:border-2 group-hover:border-l-0 placeholder:text-center"
-          ></textarea>
-        </div>
-        <div className="dayBlock h-1/5 w-full  flex flex-row gap-3 transition-all duration-1000 hover:h-full group">
-          <div className="dayBlock h-full w-40 bg-[#EEEEEF] grid place-items-center font-bold group-hover:border-2 group-hover:border-r-0 group-hover:border-t-[#FF4A1C] group-hover:border-l-[#FF4A1C] group-hover:border-b-[#FF4A1C] rounded-l-lg  cursor-pointer group-hover:bg-[#FF4A1C]/10 transition-all text-black/70">
-            Thursday
-          </div>
-          <textarea
-            onChange={handleTextAreaChange}
-            name="thursday"
-            value={weekReport.thursday}
-            placeholder="Description of Work-Done on Thursday"
-            style={{ resize: "none" }}
-            className="bg-[#EEEEEF] font-sans flex-1 p-2 focus:outline-none group-hover:border-r-[#FF4A1C] group-hover:border-b-[#FF4A1C] group-hover:border-t-[#FF4A1C] rounded-r-lg group-hover:border-2 group-hover:border-l-0 placeholder:text-center"
-          ></textarea>
-        </div>
-        <div className="dayBlock h-1/5 w-full  flex flex-row gap-3 transition-all gpu duration-1000 hover:h-full group">
-          <div className="dayBlock h-full w-40 bg-[#EEEEEF] grid place-items-center font-bold group-hover:border-2 group-hover:border-r-0 group-hover:border-t-[#FF4A1C] group-hover:border-l-[#FF4A1C] group-hover:border-b-[#FF4A1C] rounded-l-lg  cursor-pointer group-hover:bg-[#FF4A1C]/10 transition-all text-black/70">
-            Friday
-          </div>
-          <textarea
-            onChange={handleTextAreaChange}
-            name="friday"
-            value={weekReport.friday}
-            placeholder="Description of Work-Done on Friday"
-            style={{ resize: "none" }}
-            className="bg-[#EEEEEF] font-sans flex-1 p-2 focus:outline-none group-hover:border-r-[#FF4A1C] group-hover:border-b-[#FF4A1C] group-hover:border-t-[#FF4A1C] rounded-r-lg group-hover:border-2 group-hover:border-l-0 placeholder:text-center"
-          ></textarea>
-        </div>
+      <div
+        className={`h-[${heightNew}px] max-h-[${heightNew}] w-full self-center`}
+      >
+        <WeekSheetMotion
+          height={heightNew}
+          handleTextAreaChange={handleTextAreaChange}
+          weekReport={weekReport}
+        />
       </div>
     </div>
   );

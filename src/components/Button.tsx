@@ -28,7 +28,7 @@ function Button({
   return (
     <Link className={className} onClick={handleClick} to={linkTO}>
       <div
-        className={`self-center w-fit relative flex flex-row items-center gap-2 text-white 
+        className={` whitespace-nowrap self-center w-fit relative flex flex-row items-center gap-2 text-white 
         ${square ? "py-2 px-2" : "px-5 "}
         ${slimmer ? "py-1" : "py-3"} rounded-md overflow-hidden group ${
           secondary ? "bg-[#FF4A1C]" : "bg-[#246C5A]"

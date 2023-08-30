@@ -1,10 +1,20 @@
+import {
+  AiFillLeftCircle,
+  AiFillLeftSquare,
+  AiFillRightCircle,
+  AiFillRightSquare,
+} from "react-icons/ai";
 import React, { useEffect, useState } from "react";
-import { AiFillLeftCircle, AiFillRightCircle } from "react-icons/ai";
 import StudentSheet, { WeekReport } from "../components/StudentSheet";
+
 import { GET_DOCUMENT } from "../hooks/firestoreHooks";
-import { useAppSelector } from "../app/hooks";
 import { InfinitySpin } from "react-loader-spinner";
 import Particulars from "../components/Particulars";
+import { ParticularsInterface } from "../interface/particulars";
+import WeekSheetMotion from "../components/WeekSheetMotion";
+import { setParticulars } from "../features/particulars/particularsSlice";
+import { useAppSelector } from "../app/hooks";
+import { useDispatch } from "react-redux";
 
 const dates: string[] = [
   "Week 1",
@@ -14,21 +24,38 @@ const dates: string[] = [
   "Week 5",
   "Week 6",
   "Week 7",
+  "Week 8",
+  "Week 9",
+  "Week 10",
+  "Week 11",
+  "Week 12",
 ];
 
 export default function Student() {
+  const dispatch = useDispatch();
   const [currentSlide, setCurrentSlide] = useState(0);
   const [move, setMove] = useState(0);
+  const [shouldRenderParticulars, setShouldRenderParticulars] = useState(false);
   const user = useAppSelector((state) => state.app.user);
-  const doneParticulars = useAppSelector(
-    (state) => state.app.particularsSubmited
-  );
+  const particulars = useAppSelector((state) => state.particulars.particulars);
   const firstTime = useAppSelector((state) => state.app.firstTime);
   const [weekData, setWeekData] = useState({});
   const getDoc = async () => {
     if (user) {
       const doc = await GET_DOCUMENT("students", user.uid);
       if (doc?.exists()) {
+        const particularsDB: ParticularsInterface = doc.data().PARTICULARS;
+        const weeklyProgress: WeekReport = doc.data().WEEKLY_PROGRESS;
+
+        console.log(user.uid);
+        console.log({ particularsDB, weeklyProgress });
+
+        if (!particularsDB) {
+          setShouldRenderParticulars(true);
+        } else {
+          setShouldRenderParticulars(false);
+          dispatch(setParticulars(particularsDB));
+        }
         setWeekData(doc.data().WEEKLY_PROGRESS);
       } else {
         // docSnap.data() will be undefined in this case
@@ -37,20 +64,16 @@ export default function Student() {
     }
   };
 
-  // Set loading state to true initially
-  const [loading, setLoading] = useState(true);
   useEffect(() => {
     getDoc();
-    // Loading function to load data or
-    // fake it using setTimeout;
-    const loadData = async () => {
-      // Wait for two second
-      await new Promise((r) => setTimeout(r, 2000));
+  }, []);
 
-      // Toggle loading state
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    const loadData = async () => {
+      await new Promise((r) => setTimeout(r, 2000));
       setLoading((loading) => !loading);
     };
-
     loadData();
   }, []);
   if (loading) {
@@ -63,7 +86,7 @@ export default function Student() {
 
   return (
     <div className="h-[90vh] overflow-hidden gap-5 flex justify-center items-center">
-      {firstTime && <Particulars />}
+      {shouldRenderParticulars && <Particulars />}
       <div
         className=" cursor-pointer z-50 group"
         onClick={() => {
@@ -75,27 +98,29 @@ export default function Student() {
           setMove(-1);
         }}
       >
-        <AiFillLeftCircle
-          size={70}
-          className="text-black/10 group-hover:text-[#FF4A1C] transition-colors"
+        <AiFillLeftSquare
+          size={80}
+          className=" stroke-black stroke-[5px] rounded-lg  text-black/10 group-hover:text-[#FF4A1C] group-hover:stroke-0 transition-colors"
         />
-        <p className="w-full text-sm font-bold group-hover:text-[#FF4A1C] transition-colors">
+        <p className="w-full text-center text-xs font-extrabold group-hover:text-[#FF4A1C] transition-colors">
           Prev Week
         </p>
       </div>
-      <div className=" w-2/6 h-full pb-10 relative">
+      <div className=" w-2/3 lg:w-2/6 h-full relative">
         {dates.map((date, index) => {
-          return (
+          return particulars?.startDate ? (
             <StudentSheet
               weekData={weekData}
               dates={dates}
               date={date}
               key={index}
               weekID={index}
+              startDate={particulars.startDate}
               currentIndex={currentSlide}
               move={move}
-              style={{}}
             />
+          ) : (
+            <></>
           );
         })}
       </div>
@@ -111,11 +136,11 @@ export default function Student() {
           setMove(1);
         }}
       >
-        <AiFillRightCircle
-          size={70}
-          className="text-black/10 group-hover:text-[#FF4A1C] transition-colors"
+        <AiFillRightSquare
+          size={80}
+          className=" stroke-black stroke-[5px] rounded-lg  text-black/10 group-hover:text-[#FF4A1C] group-hover:stroke-0 transition-colors"
         />
-        <p className="w-full text-sm font-bold group-hover:text-[#FF4A1C] transition-colors">
+        <p className="w-full text-center text-xs font-extrabold group-hover:text-[#FF4A1C] transition-colors">
           Next Week
         </p>
       </div>

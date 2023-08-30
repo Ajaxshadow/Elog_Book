@@ -6,6 +6,7 @@ import { useAppDispatch, useAppSelector } from "../app/hooks";
 import appSlice, { login, logout } from "../features/app/appSlice";
 import { getAuth, signOut } from "firebase/auth";
 import { AiFillProfile, AiOutlineProfile, AiOutlineUser } from "react-icons/ai";
+import { setParticulars } from "../features/particulars/particularsSlice";
 export function LayoutLoggedIn() {
   const user = useAppSelector((state) => state.app.user);
   const [activeLink, setActiveLink] = useState("");
@@ -74,6 +75,7 @@ export function LayoutLoggedIn() {
                 className=" text-xs"
                 handleClick={() => {
                   dispatch(logout());
+                  dispatch(setParticulars(null));
                   signOut(auth).then(() => {
                     navigate("/");
                   });
