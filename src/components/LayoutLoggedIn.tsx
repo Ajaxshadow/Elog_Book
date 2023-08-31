@@ -1,12 +1,14 @@
-import { Outlet, NavLink, Link, useNavigate } from "react-router-dom";
-import logo from "../assets/Logo.svg";
-import { useState } from "react";
-import Button from "./Button";
-import { useAppDispatch, useAppSelector } from "../app/hooks";
+import { AiFillProfile, AiOutlineProfile, AiOutlineUser } from "react-icons/ai";
+import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
 import appSlice, { login, logout } from "../features/app/appSlice";
 import { getAuth, signOut } from "firebase/auth";
-import { AiFillProfile, AiOutlineProfile, AiOutlineUser } from "react-icons/ai";
+import { useAppDispatch, useAppSelector } from "../app/hooks";
+
+import Button from "./Button";
+import logo from "../assets/Logo.svg";
 import { setParticulars } from "../features/particulars/particularsSlice";
+import { useState } from "react";
+
 export function LayoutLoggedIn() {
   const user = useAppSelector((state) => state.app.user);
   const [activeLink, setActiveLink] = useState("");
@@ -70,21 +72,28 @@ export function LayoutLoggedIn() {
                 </NavLink>
               </li>
 
-              <Button
+              {/* <Button
                 square
                 className=" text-xs"
-                handleClick={() => {
+                // handleClick={() => {
+                //   dispatch(logout());
+                //   dispatch(setParticulars(null));
+                //   signOut(auth).then(() => {
+                //     navigate("/");
+                //   });
+                //   console.log(user);
+                // }}
+                value="Log Out"
+                secondary
+              ></Button> */}
+              <div onClick={() => {
                   dispatch(logout());
                   dispatch(setParticulars(null));
                   signOut(auth).then(() => {
                     navigate("/");
                   });
                   console.log(user);
-                }}
-                value="Log Out"
-                secondary
-              ></Button>
-              <div className=" flex flex-col aspect-square justify-center items-center">
+                }} className="flex cursor-pointer bg-[#FF4A1C] text-white border-4 rounded-lg px-5 py-1 border-[#b8300e] flex-col justify-center items-center text-xs">
                 <AiOutlineUser />
                 {user && user.displayName?.split(" ")[0]}
               </div>

@@ -1,30 +1,28 @@
-import React, { ChangeEvent, useEffect, useState } from "react";
 import {
   AiFillEye,
   AiFillEyeInvisible,
   AiFillGoogleCircle,
 } from "react-icons/ai";
-import Button from "../components/Button";
 import {
-  getAuth,
   GoogleAuthProvider,
-  signInWithPopup,
-  signInWithEmailAndPassword,
-  setPersistence,
-  browserSessionPersistence,
   getAdditionalUserInfo,
+  getAuth,
+  signInWithPopup,
 } from "firebase/auth";
-import { useNavigate } from "react-router-dom";
-import { useAppDispatch } from "../app/hooks";
-
+import React, { ChangeEvent, useEffect, useState } from "react";
 import { login, setFirstTime } from "../features/app/appSlice";
+
+import Button from "../components/Button";
 import { InfinitySpin } from "react-loader-spinner";
-import { LOGIN_EMAIL } from "../hooks/firestoreHooks";
-import InstructorBg from "../assets/Instructor.jpg";
 import InstructorBgSVG from "../assets/Instructor.svg";
+import { LOGIN_EMAIL } from "../hooks/firestoreHooks";
+import { useAppDispatch } from "../app/hooks";
+import { useNavigate } from "react-router-dom";
+
 export interface LoginHandlerProps {
   email: string;
   password: string;
+  role?: "teacher" | "student";
 }
 
 export default function Login() {
@@ -51,7 +49,7 @@ export default function Login() {
         setAuthing(false);
       });
   };
-  const updateLoginData = (target: string, text: string) => {
+  const updateLoginData = (target: string, text: string, role:"teahcher" | "student") => {
     setLoginError(false);
     switch (target) {
       case "email":
@@ -123,20 +121,22 @@ export default function Login() {
                 <div className="flex  flex-col gap-2 items-center">
                   <input
                     onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                      updateLoginData("email", event.target.value)
+                      updateLoginData("email", event.target.value, "teahcher")
                     }
                     className="bg-white shadow-black/20 shadow-lg rounded-md py-2 px-5 w-full text-white"
                     type="email" //toyin3516@bazeuniversity.edu.ng
                     placeholder="Email"
+                    name="instructorEmail"
                   ></input>
                   <div className=" flex h-10 flex-row gap-2">
                     <input
                       onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                        updateLoginData("password", event.target.value)
+                        updateLoginData("password", event.target.value, "teahcher")
                       }
                       className="bg-white shadow-black/20 shadow-lg rounded-l-md py-2 px-5 text-white max-h-fit"
                       type={hidePassword ? "password" : "text"}
                       placeholder="Password"
+                      name="instructorPassword"
                     ></input>
                     <div
                       onClick={() => {
@@ -198,20 +198,22 @@ export default function Login() {
           <div className="p-20 pt-0 flex flex-col gap-2 items-center">
             <input
               onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                updateLoginData("email", event.target.value)
+                updateLoginData("email", event.target.value, "student")
               }
               className="bg-black/20 rounded-md py-2 px-5 w-full text-white"
               type="email" //toyin3516@bazeuniversity.edu.ng
               placeholder="Email"
+              name="studentEmail"
             ></input>
             <div className=" flex flex-row gap-2">
               <input
                 onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                  updateLoginData("password", event.target.value)
+                  updateLoginData("password", event.target.value, "student")
                 }
                 className="bg-black/20 rounded-l-md py-2 px-5 text-white max-h-fit"
                 type={hidePassword ? "password" : "text"}
                 placeholder="Password"
+                name="studentPassword"
               ></input>
               <div
                 onClick={() => {
