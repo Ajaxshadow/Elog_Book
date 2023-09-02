@@ -1,6 +1,7 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import type { RootState } from "../../app/store";
+import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { User, UserCredential } from "firebase/auth";
+
+import type { RootState } from "../../app/store";
 
 // Define a type for the slice state
 interface appState {
