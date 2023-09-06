@@ -1,11 +1,12 @@
-import React, { ChangeEventHandler, useState } from "react";
+import React, { ChangeEventHandler, useEffect, useRef, useState } from "react";
+import { SAVE_PARTICULARS, useFireHook } from "../hooks/firestoreHooks";
+
 import Button from "./Button";
 import { Formik } from "formik";
-import { SAVE_PARTICULARS } from "../hooks/firestoreHooks";
+import { ParticularsInterface } from "../interface/particulars";
+import { setParticulars } from "../features/particulars/particularsSlice";
 import { useAppSelector } from "../app/hooks";
 import { useDispatch } from "react-redux";
-import { setParticulars } from "../features/particulars/particularsSlice";
-import { ParticularsInterface } from "../interface/particulars";
 
 type CustomRadio = {
   label: string;
@@ -14,7 +15,40 @@ type CustomRadio = {
 
 const CustomRadio = () => {};
 
+type InputWithSuggestionsProps = React.InputHTMLAttributes<HTMLInputElement>&{sugs:any[];sfv:(f:string, v:string)=>void}
+
+const InputWithSuggestions = (props:InputWithSuggestionsProps) => {
+  const [s,setS]= useState(false);
+  const [v,setV]= useState<string>();
+  const handleChange = (val:string) => {
+    setV(val)
+    setS(false)
+    props.name&&props.sfv(props.name, val);
+  }
+  useEffect(() => {console.log("rerender")},[v])
+  return(
+    <div   tabIndex ={1}  onFocus={()=>{setS(true)}} onClick={()=>{!s&&setS(true)}} onBlur={(e:any)=>{setS(false)}} className="w-full relative">
+     
+        <div className={`w-full bg-black/5 rounded-l-md mb-3 py-2 px-5 ${v?"":"text-black/50"}`}>{v?v:props.placeholder}</div>
+      {s? 
+        <ul className="z-10 shadow-xl rounded-lg absolute bg-white border-2 flex flex-col border-[#FF4A1C] w-full p-2 gap-2">
+          {props.sugs.map((x:any,i)=>(
+            <li 
+              onClick={()=>{handleChange(x[1].name)}}
+              key={i} 
+              className="cursor-pointer flex justify-between uppercase text-black/50 bg-black/5 p-2 text-xs hover:bg-[#FF4A1C] hover:text-white">
+              <span>{x[1].name}</span>
+              <span>{x[0]}</span>
+            </li>
+          ))}
+        </ul> : null
+      }
+    </div>
+  )
+}
+
 export default function Particulars() {
+  const [sups,supsLoading] = useFireHook()
   const user = useAppSelector((state) => state.app.user);
   const dispatch = useDispatch();
   const [sex, setSex] = useState("");
@@ -30,9 +64,11 @@ export default function Particulars() {
     sex: "",
     startDate: "",
   };
-  if (Done) {
-    return <></>;
+  
+  if (Done || !sups) {
+    return null;
   }
+  
   return (
     <div className="firstTime w-full h-full grid place-items-center absolute top-0 left-0 z-50 bg-black/20">
       <div className="firstCont bg-white shadow-xl p-10 rounded-xl">
@@ -88,7 +124,7 @@ export default function Particulars() {
                   </span>
                 </div>
                 <input
-                  name="startDate"
+                  name="startDate" 
                   className="w-full bg-black/5 rounded-l-md py-2 px-5 placeholder:text-black/50 text-black"
                   type="date"
                   onChange={handleChange}
@@ -175,7 +211,9 @@ export default function Particulars() {
                     </span>
                     {errors.siwes1 && touched.siwes1 && errors.siwes1}
                   </div>{" "}
-                  <input
+                  <InputWithSuggestions
+                    sfv={setFieldValue}
+                    sugs={Object.entries(sups as typeof Object)}
                     name="siwes1"
                     className="w-full bg-black/5 rounded-l-md mb-3 py-2 px-5 placeholder:black-/50white black-white"
                     type="text"
@@ -192,7 +230,9 @@ export default function Particulars() {
                     </span>
                     {errors.siwes2 && touched.siwes2 && errors.siwes2}
                   </div>{" "}
-                  <input
+                  <InputWithSuggestions
+                  sfv={setFieldValue}
+                  sugs={Object.entries(sups as typeof Object)}
                     name="siwes2"
                     className="w-full bg-black/5 rounded-l-md py-2 px-5 placeholder:text-black/50 text-black"
                     type="text"
@@ -261,6 +301,9 @@ export default function Particulars() {
                   }}
                   value="Submit"
                 />
+               <div onClick={()=>{setDone(true)}} className=" cursor-pointer">
+                 <b>skip</b>
+                </div> 
               </div>
             </form>
           )}

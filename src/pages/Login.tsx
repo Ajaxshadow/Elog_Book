@@ -117,73 +117,75 @@ export default function Login() {
               <h1 className="text-white font-bold text-3xl z-10 pl-5 pt-5">
                 Supervisor Login
               </h1>
-              <div className=" z-10 px-20 pb-10">
-                <div className="flex  flex-col gap-2 items-center">
-                  <input
-                    onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                      updateLoginData("email", event.target.value, "teahcher")
-                    }
-                    className="bg-white shadow-black/20 shadow-lg rounded-md py-2 px-5 w-full text-white"
-                    type="email" //toyin3516@bazeuniversity.edu.ng
-                    placeholder="Email"
-                    name="instructorEmail"
-                  ></input>
-                  <div className=" flex h-10 flex-row gap-2">
+              <form className=" z-10">
+                <div className=" z-10 px-20 pb-10">
+                  <div className="flex  flex-col gap-2 items-center">
                     <input
                       onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                        updateLoginData("password", event.target.value, "teahcher")
+                        updateLoginData("email", event.target.value, "teahcher")
                       }
-                      className="bg-white shadow-black/20 shadow-lg rounded-l-md py-2 px-5 text-white max-h-fit"
-                      type={hidePassword ? "password" : "text"}
-                      placeholder="Password"
-                      name="instructorPassword"
+                      className="bg-white shadow-black/20 shadow-lg rounded-md py-2 px-5 w-full text-white"
+                      type="email" //toyin3516@bazeuniversity.edu.ng
+                      placeholder="Email"
+                      name="instructorEmail"
                     ></input>
-                    <div
-                      onClick={() => {
-                        setHidePassword(!hidePassword);
-                      }}
-                      className="togglePass group overflow-hidden relative cursor-pointer text-sm h-full self-center px-2  rounded-r-md  bg-black/20 grid place-items-center text-white"
-                    >
-                      <div className=" absolute w-full h-full bg-white top-full left-0 group-hover:top-0  transition-all"></div>
-                      {hidePassword ? (
-                        <AiFillEye
-                          className=" z-10 text-white group-hover:text-[#FF4A1C] transition-colors"
-                          size={20}
-                        />
-                      ) : (
-                        <AiFillEyeInvisible
-                          className="z-10 text-white group-hover:text-[#FF4A1C] transition-colors"
-                          size={20}
-                        />
-                      )}
+                    <div className=" flex h-10 flex-row gap-2">
+                      <input
+                        onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                          updateLoginData("password", event.target.value, "teahcher")
+                        }
+                        className="bg-white shadow-black/20 shadow-lg rounded-l-md py-2 px-5 text-white max-h-fit"
+                        type={hidePassword ? "password" : "text"}
+                        placeholder="Password"
+                        name="instructorPassword"
+                      ></input>
+                      <div
+                        onClick={() => {
+                          setHidePassword(!hidePassword);
+                        }}
+                        className="togglePass group overflow-hidden relative cursor-pointer text-sm h-full self-center px-2  rounded-r-md  bg-black/20 grid place-items-center text-white"
+                      >
+                        <div className=" absolute w-full h-full bg-white top-full left-0 group-hover:top-0  transition-all"></div>
+                        {hidePassword ? (
+                          <AiFillEye
+                            className=" z-10 text-white group-hover:text-[#FF4A1C] transition-colors"
+                            size={20}
+                          />
+                        ) : (
+                          <AiFillEyeInvisible
+                            className="z-10 text-white group-hover:text-[#FF4A1C] transition-colors"
+                            size={20}
+                          />
+                        )}
+                      </div>
                     </div>
+                    <div className="mt-3">
+                      <Button
+                        loading={authing}
+                        handleClick={signInWithEmail}
+                        value="Log In"
+                        secondary
+                        slimmer
+                      ></Button>
+                    </div>
+                    <AiFillGoogleCircle
+                      size={30}
+                      className=" cursor-pointer"
+                      color="white"
+                      onClick={signInWithGoogle}
+                    ></AiFillGoogleCircle>
                   </div>
-                  <div className="mt-3">
-                    <Button
-                      loading={authing}
-                      handleClick={signInWithEmail}
-                      value="Log In"
-                      secondary
-                      slimmer
-                    ></Button>
+                  <div
+                    className={`${
+                      loginError ? "bottom-0" : "-bottom-full"
+                    } absolute error bg-[#FF4A1C] w-full text-center text-white py-2 transition-all duration-1000`}
+                  >
+                    {errorMessage
+                      ? errorMessage
+                      : "Username or Password Incorrect"}
                   </div>
-                  <AiFillGoogleCircle
-                    size={30}
-                    className=" cursor-pointer"
-                    color="white"
-                    onClick={signInWithGoogle}
-                  ></AiFillGoogleCircle>
                 </div>
-                <div
-                  className={`${
-                    loginError ? "bottom-0" : "-bottom-full"
-                  } absolute error bg-[#FF4A1C] w-full text-center text-white py-2 transition-all duration-1000`}
-                >
-                  {errorMessage
-                    ? errorMessage
-                    : "Username or Password Incorrect"}
-                </div>
-              </div>
+              </form>
             </div>
             <div className="flex flex-row items-center gap-3 mt-5">
               <p className="text-white">Don't Have A Supervisor Account? </p>

@@ -53,7 +53,8 @@ export default function Student() {
         if (!particularsDB) {
           setShouldRenderParticulars(true);
         } else {
-          setShouldRenderParticulars(false);
+          //! Change Back to false 
+          setShouldRenderParticulars(true);
           dispatch(setParticulars(particularsDB));
         }
         setWeekData(doc.data().WEEKLY_PROGRESS);

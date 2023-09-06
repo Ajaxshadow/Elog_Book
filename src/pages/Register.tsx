@@ -1,33 +1,37 @@
-import React, { ChangeEvent, useEffect, useState } from "react";
 import {
   AiFillEye,
   AiFillEyeInvisible,
   AiFillGoogleCircle,
 } from "react-icons/ai";
-import Button from "../components/Button";
 import {
-  getAuth,
   GoogleAuthProvider,
-  signInWithPopup,
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
-  UserCredential,
   User,
+  UserCredential,
+  createUserWithEmailAndPassword,
+  getAuth,
+  signInWithEmailAndPassword,
+  signInWithPopup,
   updateProfile,
 } from "firebase/auth";
-import db from "firebase/database";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import { collection, doc, getFirestore, setDoc } from "firebase/firestore";
-import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
 import { login, setFirstTime } from "../features/app/appSlice";
-import { useAppSelector, useAppDispatch } from "../app/hooks";
+import { useAppDispatch, useAppSelector } from "../app/hooks";
+
+import Button from "../components/Button";
 import { InfinitySpin } from "react-loader-spinner";
 import InstructorBgSVG from "../assets/Instructor.svg";
+import { NEWLEC } from "../hooks/firestoreHooks";
+import db from "firebase/database";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+
 interface RegisterHandlerProps {
   fname: string;
   lname: string;
   email: string;
   password: string;
+  lecturerID?: string;
 }
 
 export default function Register() {
@@ -98,6 +102,9 @@ export default function Register() {
       case "email":
         setRegisterData((prev) => ({ ...prev, email: text }));
         break;
+      case "lecturerID":
+        setRegisterData((prev) => ({ ...prev, lecturerID: text }));
+        break;
       case "password":
         setRegisterData((prev) => ({ ...prev, password: text }));
         break;
@@ -112,11 +119,11 @@ export default function Register() {
     }
   };
 
-  const createUser = async () => {
+  const createStudent = async () => {
     createUserWithEmailAndPassword(
       auth,
       registerData.email,
-      registerData.password
+      registerData.password,
     )
       .then((user) => {
         console.log(user);
@@ -124,6 +131,29 @@ export default function Register() {
           displayName: registerData.fname + " " + registerData.lname,
         });
         addStudentId(user.user);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+  const createLecturer = async () => {
+    createUserWithEmailAndPassword(
+      auth,
+      registerData.email,
+      registerData.password
+    )
+      .then((user) => {
+        if(registerData.lecturerID){
+          NEWLEC(registerData.lecturerID, user.user)
+        console.log(user);
+        updateProfile(user.user, {
+          displayName: registerData.fname + " " + registerData.lname,
+        });
+        dispatch(login(user.user));
+    dispatch(setFirstTime(true));
+    setUserData(user.user);
+        }
+        
       })
       .catch((error) => {
         console.log(error);
@@ -164,7 +194,7 @@ export default function Register() {
           <div className="overflow-hidden h-fit -mt-32  z-10 relative w-fit self-center flex flex-col  gap-5 rounded-md">
             <div className="blrBg  w-full h-full absolute bg-white bg-opacity-10 backdrop-blur-sm rounded shadow-xl"></div>
             <h1 className="text-white font-bold text-3xl z-10 pl-5 pt-5">
-              Supervisor <br /> Register
+              Supervisor <br /> Registration
             </h1>
             <div className=" z-10 px-20 pb-10">
               <div className="px-20 flex flex-col gap-2 items-center">
@@ -233,7 +263,7 @@ export default function Register() {
                 <div className="mt-3">
                   <Button
                     loading={authing}
-                    handleClick={createUser}
+                    handleClick={createLecturer}
                     value="Register"
                     secondary
                     slimmer
@@ -263,7 +293,7 @@ export default function Register() {
       </div>
       <div className=" w-1/2 h-full flex flex-col gap-5 items-center justify-center">
         <div className="bg-[#283044] overflow-hidden  z-10 relative w-fit self-center flex flex-col  gap-5 rounded-md">
-          <h1 className=" text-white font-bold text-3xl m-5">Register</h1>
+          <h1 className=" text-white font-bold text-3xl m-5">Student Registration</h1>
           <div className="p-20 pt-0 flex flex-col gap-2 items-center">
             <input
               onChange={(event: ChangeEvent<HTMLInputElement>) =>
@@ -321,7 +351,7 @@ export default function Register() {
             <div className="mt-3">
               <Button
                 loading={authing}
-                handleClick={createUser}
+                handleClick={createStudent}
                 value="Register"
                 secondary
                 slimmer

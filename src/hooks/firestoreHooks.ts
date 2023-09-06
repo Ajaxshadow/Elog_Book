@@ -1,4 +1,15 @@
 import {
+  DocumentData,
+  QueryDocumentSnapshot,
+  WithFieldValue,
+  collection,
+  doc,
+  getDoc,
+  getFirestore,
+  setDoc,
+} from "firebase/firestore";
+import React, { useEffect, useState } from "react";
+import {
   User,
   UserCredential,
   browserSessionPersistence,
@@ -6,26 +17,19 @@ import {
   setPersistence,
   signInWithEmailAndPassword,
 } from "firebase/auth";
-import {
-  DocumentData,
-  WithFieldValue,
-  collection,
-  doc,
-  getFirestore,
-  setDoc,
-  getDoc,
-} from "firebase/firestore";
+
+import { LoginHandlerProps } from "../pages/Login";
 import { WeekReport } from "../components/StudentSheet";
-import { initializeApp } from "firebase/app";
 import { config } from "../firebaseConfig/config";
+import { initializeApp } from "firebase/app";
 import { login } from "../features/app/appSlice";
 import { useAppDispatch } from "../app/hooks";
 import { useNavigate } from "react-router-dom";
-import { LoginHandlerProps } from "../pages/Login";
 
 initializeApp(config.firebaseConfig);
 const fireStore = getFirestore();
 const studentsCollectionRef = collection(fireStore, "students");
+const superCollectionRef = collection(fireStore, "supervisors");
 const auth = getAuth();
 
 export const LOGIN_EMAIL = async (loginData: LoginHandlerProps) => {
@@ -68,6 +72,25 @@ export const SAVE_WEEK_TO_DB = async (dataToSave: WeekReport, user: User) => {
     console.log(err);
   }
 };
+
+export const NEWLEC = async (lId:string, user: User)=>{
+  try {
+    const superRef = doc(superCollectionRef, user.uid);
+    await setDoc(
+      superRef,
+      {
+        LecturerId: lId,
+        name: user.displayName,
+      },
+      { merge: true }
+    ).then(() => {
+      // ! console.log("Saved!!! PARTICULARS");
+    });
+  } catch (err) {
+    console.log(err);
+  }
+}
+
 export const SAVE_PARTICULARS = async (dataToSave: Object, user: User) => {
   try {
     const studentRef = doc(studentsCollectionRef, user.uid);
@@ -84,3 +107,23 @@ export const SAVE_PARTICULARS = async (dataToSave: Object, user: User) => {
     console.log(err);
   }
 };
+
+export function useFireHook(){
+  const [sups, setSups] = useState<DocumentData>()
+  const [supsLoading, setSupsLoading] = useState(true)
+  const getSups = async () => {
+    setSupsLoading(true)
+    const x = doc(fireStore, "supervisors", "activeSupervisors");
+    const y = await getDoc(x)
+    if(y.exists()){
+      setSupsLoading(false)
+      setSups(y.data())
+    }
+   }
+  
+   React.useEffect(() =>{
+    getSups()
+   },[]);
+   
+  return [sups,supsLoading]
+}

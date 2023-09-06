@@ -53,25 +53,7 @@ export function LayoutLoggedIn() {
                   </div>
                 </NavLink>
               </li>
-              <li className=" ">
-                <NavLink
-                  className={({ isActive }) => {
-                    isActive && setActiveLink("about");
-                    return "";
-                  }}
-                  to="/about"
-                >
-                  <div className="flex flex-row items-center gap-1">
-                    {activeLink === "about" && (
-                      <div className="w-2 h-2 bg-[#FF4A1C] rounded-2xl"></div>
-                    )}
-                    <p className={activeLink === "about" ? "font-bold" : ""}>
-                      About
-                    </p>
-                  </div>
-                </NavLink>
-              </li>
-
+              
               {/* <Button
                 square
                 className=" text-xs"
