@@ -122,6 +122,7 @@ export function useFireHook(){
   const [sups, setSups] = useState<DocumentData>()
   const [supees, setSupees] = useState<DocumentData>()
   const [supeesProg, setSupeesProg] = useState<any[]>([])
+  const [dtLs, setDtLs] = useState<any[]>([])
   const [supeesFull, setSupeesFull] = useState<DocumentData>()
   const [supsLoading, setSupsLoading] = useState<boolean>(true)
   
@@ -148,7 +149,40 @@ export function useFireHook(){
       return(y.data().STUDENTS)
     }else{return undefined}
   }
-
+  function addDays(date:Date, days:number) {
+    const dateCopy = new Date(date);
+    dateCopy.setDate(date.getDate() + days);
+    return dateCopy;
+  }
+  const getDaysLeft = async (sps:any[]) =>{
+    let c:any[] = []
+    sps.forEach(async (sp:any,i )=> {
+      let entries = 0;
+      const x = doc(fireStore, "students", sp.SiD);
+      const y = await getDoc(x)
+      if(y.exists()){
+        if(y.data().PARTICULARS.startDate){
+          // console.log(y.data().PARTICULARS.startDate)
+          const x:Date = y.data().PARTICULARS.startDate
+          const now = new Date()
+          const old = new Date(x)
+          const d = new Date(x)
+          const newD = addDays(d,84)
+          const secsdif = (newD.getTime() - now.getTime())
+          console.log(secsdif)
+          const dif = secsdif/ (1000 * 60 * 60 * 24);
+          c.push({[sp.SiD]:Math.round(dif)})
+        }
+      }else{return([{}])} 
+      if(i===sps.length-1){
+        // console.log(c)
+        setDtLs(c)
+        return(c)
+      }
+    })
+    return(dtLs)
+    
+  }
   const getProg = async (sps:any[]):Promise<any[]|any>=> {
     let c:any[] = []
     sps.forEach(async (sp:any,i )=> {
@@ -177,5 +211,5 @@ export function useFireHook(){
     
    },[]);
    
-  return {sups,setSupee, getProg, supeesFull, getSupees, supees}
+  return {sups,setSupee, getProg, supeesFull, getSupees, supees, getDaysLeft}
 }
