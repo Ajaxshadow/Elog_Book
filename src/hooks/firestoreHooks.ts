@@ -2,11 +2,14 @@ import {
   DocumentData,
   QueryDocumentSnapshot,
   WithFieldValue,
+  arrayUnion,
   collection,
   doc,
   getDoc,
   getFirestore,
+  query,
   setDoc,
+  updateDoc
 } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import {
@@ -73,18 +76,25 @@ export const SAVE_WEEK_TO_DB = async (dataToSave: WeekReport, user: User) => {
   }
 };
 
-export const NEWLEC = async (lId:string, user: User)=>{
+export const NEWLEC = async (lId:string,name:string,user: User)=>{
   try {
     const superRef = doc(superCollectionRef, user.uid);
+    const aL = doc(superCollectionRef, "activeSupervisors")
     await setDoc(
       superRef,
-      {
+      {userInfo:{
         LecturerId: lId,
-        name: user.displayName,
-      },
+        name,
+      }},
       { merge: true }
-    ).then(() => {
-      // ! console.log("Saved!!! PARTICULARS");
+    ).then(async() => {
+      console.log(user)
+      await setDoc(
+        aL,
+        { [user.uid]: {name:name,lId:lId} },
+        {merge:true}
+      )
+
     });
   } catch (err) {
     console.log(err);
@@ -110,7 +120,16 @@ export const SAVE_PARTICULARS = async (dataToSave: Object, user: User) => {
 
 export function useFireHook(){
   const [sups, setSups] = useState<DocumentData>()
-  const [supsLoading, setSupsLoading] = useState(true)
+  const [supees, setSupees] = useState<DocumentData>()
+  const [supeesProg, setSupeesProg] = useState<any[]>([])
+  const [supeesFull, setSupeesFull] = useState<DocumentData>()
+  const [supsLoading, setSupsLoading] = useState<boolean>(true)
+  
+  const setSupee = async (supeeID:string, supeeName:string, lId:string,first:boolean)=>{
+    const x = doc(fireStore, "supervisors", lId);
+    await updateDoc( x, {STUDENTS:arrayUnion({name:supeeName,SiD:supeeID})})
+  }
+  
   const getSups = async () => {
     setSupsLoading(true)
     const x = doc(fireStore, "supervisors", "activeSupervisors");
@@ -120,10 +139,43 @@ export function useFireHook(){
       setSups(y.data())
     }
    }
-  
+  const getSupees = async (uid:string) =>{
+    const x = doc(fireStore, "supervisors", uid);
+    const y = await getDoc(x)
+    if(y.exists()){
+      setSupeesFull(y.data())
+      setSupees(y.data().STUDENTS)
+      return(y.data().STUDENTS)
+    }else{return undefined}
+  }
+
+  const getProg = async (sps:any[]):Promise<any[]|any>=> {
+    let c:any[] = []
+    sps.forEach(async (sp:any,i )=> {
+      let entries = 0;
+      const x = doc(fireStore, "students", sp.SiD);
+      const y = await getDoc(x)
+      if(y.exists()){
+        if(y.data().WEEKLY_PROGRESS){
+          Object.values(y.data().WEEKLY_PROGRESS).forEach((w:any)=>{
+              Object.values(w).forEach(d=>{if(d !== ""){entries++}})
+          })
+        }
+        let x = {[sp.SiD]:Math.round((entries/60) * 100)}
+        c.push(x)
+      }else{return([{}])} 
+      if(i===sps.length-1){
+        setSupeesProg(c)
+        return(c)
+      }
+    })
+    return(supeesProg)
+    
+  }
    React.useEffect(() =>{
     getSups()
+    
    },[]);
    
-  return [sups,supsLoading]
+  return {sups,setSupee, getProg, supeesFull, getSupees, supees}
 }

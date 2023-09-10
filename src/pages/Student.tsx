@@ -53,6 +53,9 @@ export default function Student() {
         if (!particularsDB) {
           setShouldRenderParticulars(true);
         } else {
+          //
+          //** Change Back to false 
+          //
           setShouldRenderParticulars(false);
           dispatch(setParticulars(particularsDB));
         }

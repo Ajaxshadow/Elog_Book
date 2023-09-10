@@ -1,36 +1,39 @@
 import {
-  Route,
-  Routes,
-  Link,
-  Outlet,
   BrowserRouter,
+  Link,
   NavLink,
+  Outlet,
+  Route,
+  RouterProvider,
+  Routes,
   createBrowserRouter,
   createRoutesFromElements,
-  RouterProvider,
 } from "react-router-dom";
-import logo from "./assets/Logo.svg";
+import { getAuth, signOut } from "firebase/auth";
+import { useAppDispatch, useAppSelector } from "./app/hooks";
 import { useEffect, useState } from "react";
-import Landing from "./pages/Landing";
-import React from "react";
+
 import Button from "./components/Button";
 import GlobalBG from "./assets/GlobalBG.svg";
-import Login from "./pages/Login";
-import { initializeApp } from "firebase/app";
-import { config } from "./firebaseConfig/config";
-import { getAuth, signOut } from "firebase/auth";
-import Student from "./pages/Student";
-import Register from "./pages/Register";
-import { useAppDispatch, useAppSelector } from "./app/hooks";
-import { LayoutNoUser } from "./components/LayoutNoUser";
-import { LayoutLoggedIn } from "./components/LayoutLoggedIn";
+import Landing from "./pages/Landing";
 import LayoutHeader from "./components/LayoutHeader";
+import { LayoutLoggedIn } from "./components/LayoutLoggedIn";
+import { LayoutNoUser } from "./components/LayoutNoUser";
+import Login from "./pages/Login";
+import React from "react";
+import Register from "./pages/Register";
+import Student from "./pages/Student";
+import Supervisor from "./pages/Supervisor";
+import { config } from "./firebaseConfig/config";
+import { initializeApp } from "firebase/app";
+import logo from "./assets/Logo.svg";
 import { setUser } from "./features/app/appSlice";
 
 export function App() {
   const [loggedIn, setLoggedIn] = useState({} as any);
 
   const user = useAppSelector((state) => state.app.user);
+  const role = useAppSelector((state) => state.app.role);
   const auth = getAuth();
   const dispatch = useAppDispatch();
 
@@ -66,7 +69,9 @@ export function App() {
         ></div>
         <Routes>
           <Route path="/" element={<LayoutHeader />}>
-            <Route index element={user !== null ? <Student /> : <Landing />} />
+            <Route index element={user !== null ? 
+              role?.role === "student"?<Student /> :<Supervisor/>
+              : <Landing />} />
             <Route path="about" element={<About />} />
             <Route path="login" element={<Login />} />
             <Route path="register" element={<Register />} />

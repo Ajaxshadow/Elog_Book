@@ -10,7 +10,7 @@ import {
   signInWithPopup,
 } from "firebase/auth";
 import React, { ChangeEvent, useEffect, useState } from "react";
-import { login, setFirstTime } from "../features/app/appSlice";
+import { login, setFirstTime, setRole } from "../features/app/appSlice";
 
 import Button from "../components/Button";
 import { InfinitySpin } from "react-loader-spinner";
@@ -22,7 +22,7 @@ import { useNavigate } from "react-router-dom";
 export interface LoginHandlerProps {
   email: string;
   password: string;
-  role?: "teacher" | "student";
+  role?: "supervisor" | "student";
 }
 
 export default function Login() {
@@ -34,6 +34,7 @@ export default function Login() {
   const [loginData, setLoginData] = useState<LoginHandlerProps>({
     email: "",
     password: "",
+    role:undefined
   });
   const dispatch = useAppDispatch();
 
@@ -49,8 +50,9 @@ export default function Login() {
         setAuthing(false);
       });
   };
-  const updateLoginData = (target: string, text: string, role:"teahcher" | "student") => {
+  const updateLoginData = (target: string, text: string, role:"supervisor" | "student") => {
     setLoginError(false);
+    
     switch (target) {
       case "email":
         setLoginData((prev) => ({ ...prev, email: text }));
@@ -61,9 +63,11 @@ export default function Login() {
       default:
         break;
     }
+    setLoginData((p)=>({...p, role:role}))
   };
   const signInWithEmail = async () => {
     setAuthing(true);
+    console.log(loginData.role)
     const user = await LOGIN_EMAIL(loginData).catch((error) => {
       setLoginError(true);
       setAuthing(false);
@@ -74,7 +78,8 @@ export default function Login() {
     });
     if (user) {
       const newUser = getAdditionalUserInfo(user)?.isNewUser;
-      dispatch(setFirstTime(newUser));
+      newUser&&dispatch(setFirstTime(newUser));
+      loginData.role&&dispatch(setRole({role:loginData.role}))
       dispatch(login(user.user));
       navigate("/");
     }
@@ -122,9 +127,9 @@ export default function Login() {
                   <div className="flex  flex-col gap-2 items-center">
                     <input
                       onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                        updateLoginData("email", event.target.value, "teahcher")
+                        updateLoginData("email", event.target.value, "supervisor")
                       }
-                      className="bg-white shadow-black/20 shadow-lg rounded-md py-2 px-5 w-full text-white"
+                      className="bg-white shadow-black/20 shadow-lg rounded-md py-2 px-5 w-full text-black"
                       type="email" //toyin3516@bazeuniversity.edu.ng
                       placeholder="Email"
                       name="instructorEmail"
@@ -132,9 +137,9 @@ export default function Login() {
                     <div className=" flex h-10 flex-row gap-2">
                       <input
                         onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                          updateLoginData("password", event.target.value, "teahcher")
+                          updateLoginData("password", event.target.value, "supervisor")
                         }
-                        className="bg-white shadow-black/20 shadow-lg rounded-l-md py-2 px-5 text-white max-h-fit"
+                        className="bg-white shadow-black/20 shadow-lg rounded-l-md py-2 px-5 text-black max-h-fit"
                         type={hidePassword ? "password" : "text"}
                         placeholder="Password"
                         name="instructorPassword"

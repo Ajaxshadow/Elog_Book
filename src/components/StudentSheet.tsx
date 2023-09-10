@@ -95,7 +95,7 @@ export default function StudentSheet(props: StudentSheetProps) {
     setWeekReport((prev) => ({
       ...prev,
       [name]: text,
-    }));
+    })); 
 
     // console.log(weekReport);
   };

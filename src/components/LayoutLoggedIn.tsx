@@ -5,19 +5,21 @@ import { getAuth, signOut } from "firebase/auth";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 
 import Button from "./Button";
+import Supervisor from '../pages/Supervisor';
 import logo from "../assets/Logo.svg";
 import { setParticulars } from "../features/particulars/particularsSlice";
 import { useState } from "react";
 
 export function LayoutLoggedIn() {
   const user = useAppSelector((state) => state.app.user);
+  const role = useAppSelector((state) => state.app.role)
   const [activeLink, setActiveLink] = useState("");
   const dispatch = useAppDispatch();
   const auth = getAuth();
   const navigate = useNavigate();
 
   return (
-    <div className=" w-full ">
+    <div className=" w-full  ">
       <div className="h-[10vh] flex flex-col">
         <p className="bg-black text-white text-sm py-1 text-center">
           ADEBOYE JACOB E-LOG BOOK | Final Project | BAZE UNIVERSITY
@@ -30,7 +32,7 @@ export function LayoutLoggedIn() {
             share across all the pages on your site, like navigation. */}
           <div className="flex-1 flex flex-row justify-center">
             <p className="w-fit bg-white shadow-lg py-2 px-5 rounded-3xl">
-              Weekly Progress Chart
+              {role?.role=="student"?"Weekly Progress Chart":"Supervisor"}
             </p>
           </div>
           <nav className="hidden flex-1 md:block">

@@ -6,20 +6,22 @@ import type { RootState } from "../../app/store";
 // Define a type for the slice state
 interface appState {
   user: User | null;
-  firstTime: boolean | undefined;
+  firstTime: boolean | null;
+  role:{role:"supervisor"|"student"}|null;
 }
 
 // Define the initial state using that type
 const initialState: appState = {
   user: null,
-  firstTime: false,
+  firstTime: null,
+  role:null
 };
 
 export const appSlice = createSlice({
   name: "app",
   initialState,
   reducers: {
-    setFirstTime: (state, action: PayloadAction<boolean | undefined>) => {
+    setFirstTime: (state, action: PayloadAction<boolean | null>) => {
       state.firstTime = action.payload;
     },
     login: (state, action: PayloadAction<User>) => {
@@ -29,6 +31,9 @@ export const appSlice = createSlice({
       state.user = null;
       state.firstTime = false;
     },
+    setRole:(state,action:PayloadAction<{role:"supervisor"|"student"}|null>)=>{
+      state.role = action.payload;
+    },
     setUser: (state, action: PayloadAction<User | null>) => {
       state.user = action.payload;
     },
@@ -36,7 +41,7 @@ export const appSlice = createSlice({
 });
 
 // Action creators are generated for each case reducer function
-export const { login, logout, setFirstTime, setUser } =
+export const { login, logout, setFirstTime, setUser,setRole } =
   appSlice.actions;
 export const selectUser = (state: RootState) => state.app.user;
 export default appSlice.reducer;

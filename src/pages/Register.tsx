@@ -133,7 +133,11 @@ export default function Register() {
         addStudentId(user.user);
       })
       .catch((error) => {
-        console.log(error);
+        setRegisterError(true)
+        console.log(error.code);
+        if(error.code == "auth/weak-password"){
+          setErrorMessage("Weak Password")
+        }
       });
   };
   const createLecturer = async () => {
@@ -143,15 +147,9 @@ export default function Register() {
       registerData.password
     )
       .then((user) => {
-        if(registerData.lecturerID){
-          NEWLEC(registerData.lecturerID, user.user)
-        console.log(user);
-        updateProfile(user.user, {
-          displayName: registerData.fname + " " + registerData.lname,
-        });
-        dispatch(login(user.user));
-    dispatch(setFirstTime(true));
-    setUserData(user.user);
+        if(registerData.lecturerID&&registerData.fname&&registerData.lname){
+          NEWLEC(registerData.lecturerID,`${registerData.fname} ${registerData.lname}`,user.user)
+
         }
         
       })
@@ -369,7 +367,7 @@ export default function Register() {
               registerError ? "bottom-0" : "-bottom-full"
             } absolute error bg-[#FF4A1C] w-full text-center text-white py-2 transition-all duration-1000`}
           >
-            Username or Password Incorrect
+            {errorMessage ? errorMessage : "Username or Password Incorrect"}
           </div>
         </div>
         <div className="flex flex-row items-center gap-3">

@@ -1,58 +1,56 @@
-import React, { ChangeEventHandler, useEffect, useRef, useState } from "react";
 import { SAVE_PARTICULARS, useFireHook } from "../hooks/firestoreHooks";
 
 import Button from "./Button";
 import { Formik } from "formik";
 import { ParticularsInterface } from "../interface/particulars";
+import React from "react";
 import { setParticulars } from "../features/particulars/particularsSlice";
 import { useAppSelector } from "../app/hooks";
 import { useDispatch } from "react-redux";
 
-type CustomRadio = {
-  label: string;
-  onChange: ChangeEventHandler<HTMLInputElement>;
-};
-
-const CustomRadio = () => {};
-
-type InputWithSuggestionsProps = React.InputHTMLAttributes<HTMLInputElement>&{sugs:any[];sfv:(f:string, v:string)=>void}
+type InputWithSuggestionsProps = React.InputHTMLAttributes<HTMLInputElement>&{
+  sugs:any[];
+  sense?:string;
+  sfv:(f:string, v:string)=>void
+}
 
 const InputWithSuggestions = (props:InputWithSuggestionsProps) => {
-  const [s,setS]= useState(false);
-  const [v,setV]= useState<string>();
-  const handleChange = (val:string) => {
-    setV(val)
+  const [s,setS]= React.useState(false);
+  const [v,setV]= React.useState<string>();
+  const handleChange = (x:any[]) => {
+    console.log({x})
+    setV(x[1].name)
     setS(false)
-    props.name&&props.sfv(props.name, val);
+    props.name&&props.sfv(props.name, x[0]);
   }
-  useEffect(() => {console.log("rerender")},[v])
   return(
-    <div   tabIndex ={1}  onFocus={()=>{setS(true)}} onClick={()=>{!s&&setS(true)}} onBlur={(e:any)=>{setS(false)}} className="w-full relative">
-     
-        <div className={`w-full bg-black/5 rounded-l-md mb-3 py-2 px-5 ${v?"":"text-black/50"}`}>{v?v:props.placeholder}</div>
+    <div   tabIndex={0}  onFocus={()=>{setS(true)}} onClick={()=>{!s&&setS(true)}} onBlur={(e:any)=>{setS(false)}} className={`w-full relative cursor-pointer`}>
+        <div className={`w-full bg-black/5 rounded-sm mb-3 py-2 px-5 ${v?"":"text-black/50"} ${!s?"":" outline-[#FF4A1C] outline outline-2 "}`}>{v?v:props.placeholder}</div>
       {s? 
-        <ul className="z-10 shadow-xl rounded-lg absolute bg-white border-2 flex flex-col border-[#FF4A1C] w-full p-2 gap-2">
+        <div className="z-10 shadow-xl cursor-default rounded-lg absolute bg-white border-2  border-[#FF4A1C] w-full p-2 max-h-30">
+        <ul className="overflow-y-scroll flex flex-col gap-2 ">
           {props.sugs.map((x:any,i)=>(
             <li 
-              onClick={()=>{handleChange(x[1].name)}}
+              onClick={()=>{if(props.sense !== x[0]){handleChange(x)}}}
               key={i} 
-              className="cursor-pointer flex justify-between uppercase text-black/50 bg-black/5 p-2 text-xs hover:bg-[#FF4A1C] hover:text-white">
+              className={`${props.sense === x[0]? "line-through	":""} cursor-pointer flex justify-between uppercase text-black/50 bg-black/5 p-2 text-xs hover:bg-[#FF4A1C] hover:text-white`}>
               <span>{x[1].name}</span>
-              <span>{x[0]}</span>
+              <span>{x[1].lId}</span>
             </li>
           ))}
-        </ul> : null
+        </ul> 
+        </div>: null
       }
     </div>
   )
 }
 
 export default function Particulars() {
-  const [sups,supsLoading] = useFireHook()
+  const {sups , setSupee} = useFireHook()
   const user = useAppSelector((state) => state.app.user);
   const dispatch = useDispatch();
-  const [sex, setSex] = useState("");
-  const [Done, setDone] = useState(false);
+  const [sex, setSex] = React.useState("");
+  const [Done, setDone] = React.useState(false);
   const formFields: ParticularsInterface = {
     courseOfStudy: "",
     registrationNumber: "",
@@ -67,7 +65,10 @@ export default function Particulars() {
   
   if (Done || !sups) {
     return null;
+  }else{
+    console.log(sups)
   }
+  
   
   return (
     <div className="firstTime w-full h-full grid place-items-center absolute top-0 left-0 z-50 bg-black/20">
@@ -95,13 +96,18 @@ export default function Particulars() {
             setTimeout(() => {
               console.log(values);
               if (user) {
+                
                 SAVE_PARTICULARS(values, user).then(() => {
                   // dispatch(setParticularsSubmited(true))
                   values && dispatch(setParticulars(values));
                   setSubmitting(false);
                   setDone(true);
+                  user.displayName&&setSupee( user.uid, user.displayName, values.siwes1,true)
                 });
+                
               }
+              
+              
             }, 400);
           }}
         >
@@ -221,6 +227,7 @@ export default function Particulars() {
                     onBlur={handleBlur}
                     value={values.siwes1}
                     placeholder="SIWES Coordinator 1"
+                    sense={values.siwes2}
                   />
                 </div>
                 <div>
@@ -240,6 +247,7 @@ export default function Particulars() {
                     onBlur={handleBlur}
                     value={values.siwes2}
                     placeholder="SIWES Coordinator 2"
+                    sense={values.siwes1}
                   />
                 </div>
               </div>
