@@ -1,12 +1,23 @@
-import { DateCalendar, DateRangeIcon, PickersDay, PickersDayProps } from '@mui/x-date-pickers';
+import {
+  Calendar,
+  CalendarControls,
+  CalendarDays,
+  CalendarDefaultTheme,
+  CalendarMonth,
+  CalendarMonthName,
+  CalendarMonths,
+  CalendarNextButton,
+  CalendarPrevButton,
+  CalendarWeek,
+} from '@uselessdev/datepicker'
 import { GET_DOCUMENT, useFireHook } from '../hooks/firestoreHooks';
-import dayjs, { Dayjs } from 'dayjs';
 
 import { AiOutlineLoading3Quarters } from 'react-icons/ai';
-import { Badge } from '@mui/material';
-import { DocumentData } from 'firebase/firestore';
+import { CalendarTheme } from '../theme/CalendarTheme';
+import { ChakraProvider } from '@chakra-ui/react'
+import { DocumentData } from 'firebase/firestore/lite';
 import React from 'react'
-import styled from '@emotion/styled';
+import { addDays } from 'date-fns';
 import { type } from 'os';
 import { useAppSelector } from '../app/hooks';
 
@@ -31,30 +42,12 @@ export default function Supervisor() {
     const [daysL, setDaysL] = React.useState<any[]>([])
     const [selsectedStudent, setSelectedStudent] = React.useState("")
     const [highlightedDays, setHighlightedDays] = React.useState([1,2,3,4])
+    const [startandendDate, setStartandEndDate] = React.useState<{start:Date,end:Date}>()
     const [selsectedStudentData, setSelectedStudentData] = React.useState<DocumentData>()
     
     const getStuff = async () => {if(user){setSupees(await getSupees(user.uid))}}
     const getPrg = async () => {if(sps){setPrg(await getProg(sps))}}
     const getDays = async () => {if(sps){setDaysL(await getDaysLeft(sps))}}
-    
-    // const HighlightedDay = styled(PickersDay)(({ theme }) => ({
-    //     "&.Mui-selected": {
-    //       backgroundColor: "#FF4A1C",
-    //       color: "FFFFFF",
-    //     },
-    //   }));
-      
-      function ServerDay(props: PickersDayProps<Dayjs> & { highlightedDays?: number[] }) {
-        const { highlightedDays = [], day, outsideCurrentMonth, ...other } = props;
-      
-        const isSelected =
-          !props.outsideCurrentMonth && highlightedDays.indexOf(props.day.date()) >= 0;
-      
-          return (
-              <PickersDay  {...other} disableMargin selected={isSelected} outsideCurrentMonth={outsideCurrentMonth} day={day} />
-              
-          );
-      };
       
     const selectStud = (uid:string) => {
         if(selsectedStudent === uid){
@@ -65,7 +58,10 @@ export default function Supervisor() {
         setSelectedStudent(uid)
         GET_DOCUMENT("students",uid).then((r)=>{
             if(r){
+
                 setSelectedStudentData(r.data())
+                const sD = new Date(r.data().PARTICULARS.startDate)
+                setStartandEndDate({start:sD,end:addDays(sD,84)})
             }
         })
     }
@@ -113,30 +109,35 @@ export default function Supervisor() {
         </div>
         </section>
         <section className='flex-[2] pb-5'>
-            <div className='bg-white h-full p-5 rounded-lg'>
-                
+            <div className='bg-white h-fit p-5 rounded-lg'>
                 {!selsectedStudentData
                     ?<div className='w-full h-full flex justify-center items-center font-black text-5xl text-black/20 uppercase'>
                         Select a student to view <br /> data here
                     </div>
-                    :<div>
-                        
+                    :<div className='flex flex-col gap-4'>
                         <div>
                             <h1 className='font-bold text-xl'>
                                 {sps?.find(x=>x.SiD == selsectedStudent).name}
                             </h1>
                             <p className='text-sm text-black/50'>{selsectedStudentData.PARTICULARS.registrationNumber}</p>
                         </div>
-                        
-                        <DateCalendar 
-                            slots={{day:ServerDay}}
-                            slotProps={{
-                                day: {
-                                  highlightedDays,
-                                } as any,
-                              }}
-                              
-                            value={dayjs(selsectedStudentData.PARTICULARS.startDate)} />
+                      <ChakraProvider theme={CalendarTheme}>
+        {startandendDate?
+        <Calendar singleDateSelection highlightToday value={startandendDate} weekStartsOn={1} onSelectDate={(x)=>{console.log(x)}}>
+          <CalendarControls>
+            <CalendarPrevButton />
+            <CalendarNextButton />
+          </CalendarControls>
+
+          <CalendarMonths>
+            <CalendarMonth>
+              <CalendarMonthName />
+              <CalendarWeek />
+              <CalendarDays  />
+            </CalendarMonth>
+          </CalendarMonths>
+        </Calendar>:null}
+      </ChakraProvider>
                     </div>
                 }
             </div>
