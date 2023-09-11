@@ -13,12 +13,14 @@ import { getAuth, signOut } from "firebase/auth";
 import { useAppDispatch, useAppSelector } from "./app/hooks";
 import { useEffect, useState } from "react";
 
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import Button from "./components/Button";
 import GlobalBG from "./assets/GlobalBG.svg";
 import Landing from "./pages/Landing";
 import LayoutHeader from "./components/LayoutHeader";
 import { LayoutLoggedIn } from "./components/LayoutLoggedIn";
 import { LayoutNoUser } from "./components/LayoutNoUser";
+import { LocalizationProvider } from "@mui/x-date-pickers";
 import Login from "./pages/Login";
 import React from "react";
 import Register from "./pages/Register";
@@ -46,6 +48,7 @@ export function App() {
 
   return (
     <BrowserRouter>
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
       <div className="w-screen h-screen absolute bg-zinc-800 md:hidden z-[99]">
         <p className=" bg-black text-white text-sm py-1 text-center">
           ADEBOYE JACOB E-LOG BOOK | Final Project | BAZE UNIVERSITY
@@ -80,6 +83,7 @@ export function App() {
           </Route>
         </Routes>
       </div>
+      </LocalizationProvider>
     </BrowserRouter>
   );
 }

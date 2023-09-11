@@ -16,6 +16,7 @@ import {
   User,
   UserCredential,
   browserSessionPersistence,
+  getAdditionalUserInfo,
   getAuth,
   setPersistence,
   signInWithEmailAndPassword,
@@ -44,6 +45,10 @@ export const LOGIN_EMAIL = async (loginData: LoginHandlerProps) => {
     );
   });
 };
+
+const GET_USER = async (uid:UserCredential) =>{
+  getAdditionalUserInfo(uid)
+}
 
 export const GET_DOCUMENT = async (collection: string, document: string) => {
   const docRef = doc(fireStore, collection, document);
