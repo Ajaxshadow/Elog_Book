@@ -25,10 +25,11 @@ export const CalendarTheme = extendTheme(CalendarDefaultTheme, {
           bgColor: 'gray.100'
         },
         _disabled: {
+          bgColor:'black',
           color: 'gray.200',
           _hover: {
-            cursor: 'initial',
-            bgColor: 'transparent'
+            bgColor:'black',
+            color: 'gray.200',
           }
         },
         
@@ -55,8 +56,16 @@ export const CalendarTheme = extendTheme(CalendarDefaultTheme, {
           },
           
         },
+        highlighted:{
+          bgColor:'#FF4A1C',
+          color:'white',
+          _hover:{
+            bgColor:'#FF4A1C'
+          }
+        },
         outside: {
-          color: 'gray.300'
+          bgColor:'black',
+          color: 'gray.200',
         },
         today: {
           bgColor: 'red',

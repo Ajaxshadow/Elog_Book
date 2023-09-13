@@ -174,7 +174,6 @@ export function useFireHook(){
           const d = new Date(x)
           const newD = addDays(d,84)
           const secsdif = (newD.getTime() - now.getTime())
-          console.log(secsdif)
           const dif = secsdif/ (1000 * 60 * 60 * 24);
           c.push({[sp.SiD]:Math.round(dif)})
         }
