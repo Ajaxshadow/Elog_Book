@@ -10,6 +10,7 @@ import { useAppSelector } from "../app/hooks";
 type StudentSheetProps = {
   dates: string[];
   date: string;
+  firstWeek:number|null;
   currentIndex: number;
   weekID: number;
   move: number;
@@ -165,6 +166,7 @@ export default function StudentSheet(props: StudentSheetProps) {
         className={`h-[${heightNew}px] max-h-[${heightNew}] w-full self-center`}
       >
         <WeekSheetMotion
+          firstWeek={props.firstWeek}
           height={heightNew}
           handleTextAreaChange={handleTextAreaChange}
           weekReport={weekReport}

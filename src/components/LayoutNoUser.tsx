@@ -1,7 +1,9 @@
-import { Outlet, NavLink } from "react-router-dom";
+import { NavLink, Outlet } from "react-router-dom";
+
+import Button from "./Button";
 import logo from "../assets/Logo.svg";
 import { useState } from "react";
-import Button from "./Button";
+
 export function LayoutNoUser() {
   const [activeLink, setActiveLink] = useState("");
   return (
@@ -40,15 +42,18 @@ export function LayoutNoUser() {
                     isActive && setActiveLink("about");
                     return "";
                   }}
-                  to="/about"
+                  to="/superLogin"
                 >
                   <div className="flex flex-row items-center gap-1">
                     {activeLink === "about" && (
                       <div className="w-2 h-2 bg-[#FF4A1C] rounded-2xl"></div>
                     )}
-                    <p className={activeLink === "about" ? "font-bold" : ""}>
-                      About
-                    </p>
+                    <div className="relative">
+                      <p className={activeLink === "about" ? "font-bold" : ""}>
+                        Supervisor
+                      </p>
+                      <p className="absolute text-[0.5rem] right-0 -top-2 bg-[#FF4A1C] text-white rounded-md px-2 py-[0.1rem]">Login</p>
+                    </div>
                   </div>
                 </NavLink>
               </li>

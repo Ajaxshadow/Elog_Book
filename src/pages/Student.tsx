@@ -6,6 +6,7 @@ import {
 } from 'react-icons/ai';
 import React, { useEffect, useState } from 'react';
 import StudentSheet, { WeekReport } from '../components/StudentSheet';
+import { getDay, parseISO } from 'date-fns';
 
 import { GET_DOCUMENT } from '../hooks/firestoreHooks';
 import { InfinitySpin } from 'react-loader-spinner';
@@ -40,6 +41,7 @@ export default function Student() {
 	const user = useAppSelector(state => state.app.user);
 	const particulars = useAppSelector(state => state.particulars.particulars);
 	const firstTime = useAppSelector(state => state.app.firstTime);
+	const firstWeek = React.useState(1)
 	const [weekData, setWeekData] = useState({});
 	const getDoc = async () => {
 		if (user) {
@@ -49,15 +51,16 @@ export default function Student() {
 					doc.data().PARTICULARS;
 				const weeklyProgress: WeekReport = doc.data().WEEKLY_PROGRESS;
 
-				console.log(user.uid);
-				console.log({ particularsDB, weeklyProgress });
-
+				
+				particularsDB.startDate&&
+				firstWeek[1](getDay(parseISO(particularsDB.startDate)));
+				
 				if (!particularsDB) {
 					setShouldRenderParticulars(true);
 				} else {
 					//
 					//** Change Back to false
-					//
+					
 					setShouldRenderParticulars(true);
 					dispatch(setParticulars(particularsDB));
 				}
@@ -114,6 +117,7 @@ export default function Student() {
 				{dates.map((date, index) => {
 					return particulars?.startDate ? (
 						<StudentSheet
+							firstWeek={index==0?firstWeek[0]:null}
 							weekData={weekData}
 							dates={dates}
 							date={date}

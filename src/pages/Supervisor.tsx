@@ -1,3 +1,4 @@
+import { AiFillLeftSquare, AiFillRightSquare, AiOutlineLoading3Quarters } from 'react-icons/ai';
 import {
 	Calendar,
 	CalendarControls,
@@ -15,11 +16,13 @@ import {
 	addDays,
 	daysToWeeks,
 	differenceInBusinessDays,
+	differenceInCalendarWeeks,
+	differenceInWeeks,
 	parse,
 	parseJSON,
+	subDays,
 } from 'date-fns';
 
-import { AiOutlineLoading3Quarters } from 'react-icons/ai';
 import { CalendarTheme } from '../theme/CalendarTheme';
 import { ChakraProvider } from '@chakra-ui/react';
 import { DocumentData } from 'firebase/firestore/lite';
@@ -55,7 +58,7 @@ const Initials = ({ name }: { name: string }) => {
 		last: name.split(' ')[1][0],
 	});
 	return (
-		<div className=" h-10 w-10 bg-[#FF4A1C] rounded-full relative">
+		<div className=" outline outline-1 outline-white h-10 w-10 bg-[#FF4A1C] rounded-full relative">
 			<p className=" absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 font-bold text-white">
 				{`${init.first}${init.last}`}
 			</p>
@@ -105,6 +108,7 @@ export default function Supervisor() {
 		if (selsectedStudent === uid) {
 			setSelectedStudent('');
 			setSelectedStudentData(undefined);
+			setHighlightedDay(undefined)
 			return null;
 		}
 		setSelectedStudent(uid);
@@ -112,10 +116,20 @@ export default function Supervisor() {
 			if (r) {
 				setSelectedStudentData(r.data());
 				const sD = new Date(r.data().PARTICULARS.startDate);
+				setHighlightedDay(sD);
 				setStartandEndDate({ start: sD, end: addDays(sD, 84) });
 			}
 		});
 	};
+
+	const backDate = () => {
+		console.log("hello")
+		if(highlightedDay){setHighlightedDay(subDays(highlightedDay,1))}
+	}
+
+	const frontDate = () => {
+		if(highlightedDay){setHighlightedDay(addDays(highlightedDay,1))}
+	}
 
 	React.useEffect(() => {
 		!sps && getStuff();
@@ -129,162 +143,203 @@ export default function Supervisor() {
 	}, [getProg, getDays, sps, prg]);
 
 	React.useEffect(() => {
+		console.log({highlightedDay})
 		const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'];
 		if (highlightedDay && startandendDate && selsectedStudentData) {
 			const x = {
-				weekNum: Math.ceil(
-					(differenceInBusinessDays(
+				weekNum:
+					differenceInCalendarWeeks(
 						highlightedDay,
-						startandendDate.start
-					) +
-						1) /
-						5
-				),
+						startandendDate.start)+1
+					,
 				dayName: days[parseJSON(highlightedDay).getDay() - 1],
 			};
-
+			console.log(x.weekNum)
 			try {
 				let y =
 					selsectedStudentData.WEEKLY_PROGRESS[`Week_${x.weekNum}`][
 						`${x.dayName}`
 					];
+					console.log(selsectedStudentData.WEEKLY_PROGRESS)
 				setDayEntryExists(true);
 			} catch {
 				setDayEntryExists(false);
 			}
 			setWhatWeek(x);
 		}
-	}, [highlightedDay]);
+	}, [highlightedDay,startandendDate]);
 	return (
-		<div className="mt-10 flex gap-3 px-5">
-			<section className="flex-1 flex flex-col gap-3">
-				<div className=" flex-1 flex flex-col p-5 pb-7 rounded-lg bg-white">
-					<h1 className="font-bold ml-2 text-xl mb-3">Students</h1>
-					<div className=" overflow-hidden border border-1 border-black/10 rounded-lg">
-						<div className=" bg-black/10 text-black/50 text-xs flex justify-between py-2 px-3">
-							<p className="w-10 mr-6 whitespace-nowrap">Name</p>
-							<p className="flex-1 text-center">Progress</p>
-							<p className="flex-1 text-end">Days Left</p>
-						</div>
-						<div className="flex flex-col gap-2 p-3">
-							{sps && prg?.length > 0 && daysL?.length > 0 ? (
-								sps.map((i, index) => (
-									<div
-										key={index}
-										onClick={() => {
-											selectStud(i.SiD);
-										}}
-										className={`
-                     flex items-center justify-between hover:outline-[#FF4A1C]/50
-                     outline outline-2 outline-transparent cursor-pointer 
-                    transition-[outline] duration-200 rounded-sm py-1  
-                    ${
-						selsectedStudent === i.SiD
-							? 'bg-[#FF4A1C] text-white'
-							: 'bg-white hover:bg-[#FF4A1C]/5'
-					}
-                    `}>
-										<div className="mr-6">
-											<Initials name={i.name} />
+		<div className='flex h-screen flex-col'>
+			<div className="h-32 w-full"></div>
+			<div className="flex-1 flex gap-3">
+			
+				<section className="flex-1 flex flex-col gap-3">
+					<div className=" flex-1 flex flex-col p-5 pb-7 rounded-lg bg-white">
+						<h1 className="font-bold ml-2 text-xl mb-3">Students</h1>
+						<div className=" overflow-hidden border border-1 border-black/10 rounded-lg">
+							<div className=" bg-[#E3E8EF] text-black/50 text-xs flex justify-between py-2 px-3">
+								<p className="w-10 mr-6 whitespace-nowrap">Name</p>
+								<p className="flex-1 text-center">Progress</p>
+								<p className="flex-1 text-end">Days Left</p>
+							</div>
+							<div className="flex flex-col gap-2 p-3">
+								{sps && prg?.length > 0 && daysL?.length > 0 ? (
+									sps.map((i, index) => (
+										<div
+											key={index}
+											onClick={() => {
+												selectStud(i.SiD);
+											}}
+											className={`
+								 flex items-center justify-between hover:outline-[#FF4A1C]/50
+								 outline outline-2 outline-transparent cursor-pointer 
+								transition-[outline] duration-200 rounded-sm py-1
+						 rounded-l-full rounded-r-lg p-2 pl-1
+								${
+							selsectedStudent === i.SiD
+								? 'bg-[#FF4A1C] text-white'
+								: 'bg-white hover:bg-[#FF4A1C]/5'
+						}
+								`}>
+											<div className="mr-6">
+												<Initials name={i.name} />
+											</div>
+											<div className="flex-1">
+												<ProgressBar
+													selected={
+														selsectedStudent === i.SiD
+															? true
+															: false
+													}
+													prg={prg[index][i.SiD]}
+												/>
+											</div>
+											<p className="flex-1 mr-2 text-end">
+												{daysL[index][i.SiD]}
+											</p>
 										</div>
-										<div className="flex-1">
-											<ProgressBar
-												selected={
-													selsectedStudent === i.SiD
-														? true
-														: false
-												}
-												prg={prg[index][i.SiD]}
-											/>
-										</div>
-										<p className="flex-1 mr-2 text-end">
-											{daysL[index][i.SiD]}
+									))
+								) : (
+									<div className=" w-full h-32 flex flex-col justify-center font-bold text-lg items-center">
+										<AiOutlineLoading3Quarters
+											className=" animate-spin"
+											color="#FF4A1C"
+										/>
+										<p className=" text-black/50">
+											No students have been assigned
+											<br />
+											to you at this moment
 										</p>
 									</div>
-								))
-							) : (
-								<div className=" w-full h-32 flex flex-col justify-center font-bold text-lg items-center">
-									<AiOutlineLoading3Quarters
-										className=" animate-spin"
-										color="#FF4A1C"
-									/>
-									<p className=" text-black/50">
-										No students have been assigned
-										<br />
-										to you at this moment
-									</p>
-								</div>
-							)}
-						</div>
-					</div>
-				</div>
-				<div className=" flex-1 flex flex-col p-5 pb-7 rounded-lg bg-white">
-					<ChakraProvider theme={CalendarTheme}>
-						<Calendar
-							disableWeekends
-							highlightedDay={
-								highlightedDay ? highlightedDay : undefined
-							}
-							singleDateSelection
-							value={startandendDate ? startandendDate : {}}
-							weekStartsOn={1}
-							onSelectDate={(x: CalendarDate | any) => {
-								console.log(x);
-								setHighlightedDay(x);
-							}}>
-							<CalendarControls>
-								<CalendarPrevButton />
-								<CalendarNextButton />
-							</CalendarControls>
-							<CalendarMonths>
-								<CalendarMonth>
-									<CalendarMonthName />
-									<CalendarWeek />
-									<CalendarDays />
-								</CalendarMonth>
-							</CalendarMonths>
-						</Calendar>
-					</ChakraProvider>
-				</div>
-			</section>
-			<section className="flex-[2] justify-stretch flex-row md:flex-col pb-5">
-				<div className="bg-white h-full p-5 rounded-lg">
-					{!selsectedStudentData ? (
-						<div className="w-full h-full flex justify-center items-center font-black text-5xl text-black/20 uppercase">
-							Select a student to view <br /> data here
-						</div>
-					) : (
-						<div className="flex flex-col gap-4">
-							<div>
-								<h1 className="font-bold text-xl">
-									{
-										sps?.find(x =>
-											x.SiD
-												? x.SiD == selsectedStudent
-												: false
-										).name
-									}
-								</h1>
-								<p className="text-sm text-black/50">
-									{
-										selsectedStudentData.PARTICULARS
-											.registrationNumber
-									}
-								</p>
-								<p className="text-sm text-black/50">
-									{selsectedStudentData.WEEKLY_PROGRESS &&
-									whatWeek &&
-									dayEntryExists
-										? selsectedStudentData.WEEKLY_PROGRESS[
-												`Week_${whatWeek.weekNum}`
-										  ][`${whatWeek.dayName}`]
-										: 'none'}
-								</p>
+								)}
 							</div>
 						</div>
-					)}
-				</div>
-			</section>
+					</div>
+					<div className=" flex-1 flex flex-col p-5 pb-7 rounded-lg bg-white">
+						
+							<Calendar
+								disableWeekends
+								highlightedDay={
+									highlightedDay ? highlightedDay : undefined
+								}
+								allowOutsideDays
+								singleDateSelection
+								value={startandendDate ? startandendDate : {}}
+								weekStartsOn={1}
+								onSelectDate={(x: CalendarDate | any) => {
+									setHighlightedDay(x);
+								}}>
+								<CalendarControls>
+									<CalendarPrevButton />
+									<CalendarNextButton />
+								</CalendarControls>
+								<CalendarMonths>
+									<CalendarMonth>
+										<CalendarMonthName />
+										<CalendarWeek />
+										<CalendarDays />
+									</CalendarMonth>
+								</CalendarMonths>
+							</Calendar>
+					</div>
+				</section>
+				<section className="flex-[2] justify-stretch flex-row md:flex-col pb-5">
+					<div className=" h-full">
+						{!selsectedStudentData ? (
+							<div className="bg-white w-full h-full flex justify-center items-center font-black text-5xl text-black/20 uppercase">
+								Select a student to view <br /> data here
+							</div>
+						) : (
+							<div className="flex h-full flex-col gap-4">
+								<div className='flex h-full flex-col gap-3'>
+									<div className='bg-white p-2 rounded-lg"'>
+										<h1 className="font-bold uppercase text-xl">
+											{
+												sps?.find(x =>
+													x.SiD
+														? x.SiD == selsectedStudent
+														: false
+												).name
+											}
+										</h1>
+										<p className="text-sm uppercase text-black/50">
+											{
+												selsectedStudentData.PARTICULARS
+													.registrationNumber
+											}
+										</p>
+									</div>
+			
+									<div className='bg-white p-2 rounded-lg  gap-9 flex flex-1 self-start  h-fit justify-between items-center'>
+									<div
+										className=" cursor-pointer z-50 group"
+										onClick={backDate}>
+										<AiFillLeftSquare
+											size={80}
+											className=" stroke-black stroke-[5px] rounded-lg  text-black/10 group-hover:text-[#FF4A1C] group-hover:stroke-0 transition-colors"
+										/>
+										<p className="w-full text-center text-xs font-extrabold group-hover:text-[#FF4A1C] transition-colors">
+											Prev Day
+										</p>
+									</div>
+									<div className='h-full'>
+										<h2>Daily Entry for</h2>
+											<div style={{aspectRatio:"1/1.4"}} className="px-5  pt-2 text-sm h-[30rem] border-2 overflow-scroll border-[#FF4A1C] rounded-lg text-black/80 w-full">
+												<p style={{
+												backgroundImage: "linear-gradient(#d1d5db 1px, transparent 0px)",
+																				backgroundSize: "100% 2em",
+																				backgroundPositionY: "1.5rem",
+																				lineHeight: "2em",
+			
+											}}>
+												{selsectedStudentData.WEEKLY_PROGRESS &&
+												whatWeek &&
+												dayEntryExists
+													? selsectedStudentData.WEEKLY_PROGRESS[
+															`Week_${whatWeek.weekNum}`
+													  ][`${whatWeek.dayName}`]
+													: 'none'}
+											</p>
+											</div>
+									</div>
+									<div
+										className=" cursor-pointer z-50 group"
+										onClick={frontDate}>
+										<AiFillRightSquare
+											size={80}
+											className=" stroke-black stroke-[5px] rounded-lg  text-black/10 group-hover:text-[#FF4A1C] group-hover:stroke-0 transition-colors"
+										/>
+										<p className="w-full text-center text-xs font-extrabold group-hover:text-[#FF4A1C] transition-colors">
+											Next Day
+										</p>
+									</div>
+									</div>
+								</div>
+							</div>
+						)}
+					</div>
+				</section>
+			</div>
 		</div>
 	);
 }

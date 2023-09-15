@@ -9,11 +9,14 @@ import {
   createBrowserRouter,
   createRoutesFromElements,
 } from "react-router-dom";
-import { getAuth, signOut } from "firebase/auth";
+import { UserCredential, getAuth, signOut } from "firebase/auth";
+import { setRole, setUser } from "./features/app/appSlice";
 import { useAppDispatch, useAppSelector } from "./app/hooks";
 import { useEffect, useState } from "react";
 
 import Button from "./components/Button";
+import { CalendarTheme } from "./theme/CalendarTheme";
+import { ChakraProvider } from "@chakra-ui/react";
 import GlobalBG from "./assets/GlobalBG.svg";
 import Landing from "./pages/Landing";
 import LayoutHeader from "./components/LayoutHeader";
@@ -23,29 +26,39 @@ import Login from "./pages/Login";
 import React from "react";
 import Register from "./pages/Register";
 import Student from "./pages/Student";
+import SuperLogin from "./pages/SuperLogin";
 import Supervisor from "./pages/Supervisor";
 import { config } from "./firebaseConfig/config";
 import { initializeApp } from "firebase/app";
 import logo from "./assets/Logo.svg";
-import { setUser } from "./features/app/appSlice";
 
 export function App() {
   const [loggedIn, setLoggedIn] = useState({} as any);
 
   const user = useAppSelector((state) => state.app.user);
   const role = useAppSelector((state) => state.app.role);
+  const [localRole, setLocalRole] = React.useState<string|null>(null)
   const auth = getAuth();
   const dispatch = useAppDispatch();
+  
+
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
+    if(localStorage.getItem("@UserRole") && localRole === null){
+      setLocalRole(localStorage.getItem("@UserRole"))
+    }
+    const unsubscribe = auth.onIdTokenChanged((user) => {
       dispatch(setUser(user));
+      console.log({localRole})
+      if(localRole === "student" || localRole === "supervisor"){dispatch(setRole({role:localRole}))}
     });
+    
     return unsubscribe;
-  }, [dispatch]);
+  }, [dispatch, localRole]);
 
   return (
     <BrowserRouter>
+    <ChakraProvider theme={CalendarTheme}>
       <div className="w-screen h-screen absolute bg-zinc-800 md:hidden z-[99]">
         <p className=" bg-black text-white text-sm py-1 text-center">
           ADEBOYE JACOB E-LOG BOOK | Final Project | BAZE UNIVERSITY
@@ -70,16 +83,19 @@ export function App() {
         <Routes>
           <Route path="/" element={<LayoutHeader />}>
             <Route index element={user !== null ? 
-              role?.role === "student"?<Student /> :<Supervisor/>
+              role?.role === "student"?<Student /> 
+                :role?.role === "supervisor"?<Supervisor/>: <Landing/>
               : <Landing />} />
             <Route path="about" element={<About />} />
             <Route path="login" element={<Login />} />
+            <Route path="superLogin" element={<SuperLogin />} />
             <Route path="register" element={<Register />} />
             <Route path="student" element={<Student />} />
             <Route path="*" element={<NoMatch />} />
           </Route>
         </Routes>
       </div>
+      </ChakraProvider>
     </BrowserRouter>
   );
 }

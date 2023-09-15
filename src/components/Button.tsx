@@ -1,10 +1,11 @@
-import React from "react";
 import { IconBaseProps, IconType } from "react-icons";
+
 import { Link } from "react-router-dom";
+import React from "react";
 
 type ButtonProps = {
   cta?: boolean;
-  value: string;
+  value: string | any;
   linkTO?: string;
   primary?: boolean;
   secondary?: boolean;
@@ -36,7 +37,7 @@ function Button({
       >
         <div>
           <div className=" w-full h-full absolute bg-white/30 top-full left-0 group-hover:top-0 transition-all"></div>
-          <p>{loading ? "loading" : value}</p>
+          <div>{loading ? "loading" : value}</div>
         </div>
         {Right && <Right size={20} />}
       </div>

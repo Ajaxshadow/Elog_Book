@@ -77,6 +77,8 @@ export default function Login() {
       }
     });
     if (user) {
+      localStorage.setItem("@UserRole","student")
+      localStorage.setItem("@User",JSON.stringify(user))
       const newUser = getAdditionalUserInfo(user)?.isNewUser;
       newUser&&dispatch(setFirstTime(newUser));
       loginData.role&&dispatch(setRole({role:loginData.role}))
@@ -113,92 +115,7 @@ export default function Login() {
 
   return (
     <div className=" w-screen h-[90vh] flex ">
-      <div className="bg-[#283044] rounded-tr-3xl grid place-items-center w-1/2 h-full relative">
-        <div className="flex flex-col">
-          <img src={InstructorBgSVG} alt="" className="h-80"></img>
-          <div className="flex-1 grid place-items-center">
-            <div className="overflow-hidden h-fit -mt-24  z-10 relative w-fit self-center flex flex-col  gap-5 rounded-md">
-              <div className="blrBg  w-full h-full absolute bg-white bg-opacity-10 backdrop-blur-sm rounded shadow-xl"></div>
-              <h1 className="text-white font-bold text-3xl z-10 pl-5 pt-5">
-                Supervisor Login
-              </h1>
-              <form className=" z-10">
-                <div className=" z-10 px-20 pb-10">
-                  <div className="flex  flex-col gap-2 items-center">
-                    <input
-                      onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                        updateLoginData("email", event.target.value, "supervisor")
-                      }
-                      className="bg-white shadow-black/20 shadow-lg rounded-md py-2 px-5 w-full text-black"
-                      type="email" //toyin3516@bazeuniversity.edu.ng
-                      placeholder="Email"
-                      name="instructorEmail"
-                    ></input>
-                    <div className=" flex h-10 flex-row gap-2">
-                      <input
-                        onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                          updateLoginData("password", event.target.value, "supervisor")
-                        }
-                        className="bg-white shadow-black/20 shadow-lg rounded-l-md py-2 px-5 text-black max-h-fit"
-                        type={hidePassword ? "password" : "text"}
-                        placeholder="Password"
-                        name="instructorPassword"
-                      ></input>
-                      <div
-                        onClick={() => {
-                          setHidePassword(!hidePassword);
-                        }}
-                        className="togglePass group overflow-hidden relative cursor-pointer text-sm h-full self-center px-2  rounded-r-md  bg-black/20 grid place-items-center text-white"
-                      >
-                        <div className=" absolute w-full h-full bg-white top-full left-0 group-hover:top-0  transition-all"></div>
-                        {hidePassword ? (
-                          <AiFillEye
-                            className=" z-10 text-white group-hover:text-[#FF4A1C] transition-colors"
-                            size={20}
-                          />
-                        ) : (
-                          <AiFillEyeInvisible
-                            className="z-10 text-white group-hover:text-[#FF4A1C] transition-colors"
-                            size={20}
-                          />
-                        )}
-                      </div>
-                    </div>
-                    <div className="mt-3">
-                      <Button
-                        loading={authing}
-                        handleClick={signInWithEmail}
-                        value="Log In"
-                        secondary
-                        slimmer
-                      ></Button>
-                    </div>
-                    <AiFillGoogleCircle
-                      size={30}
-                      className=" cursor-pointer"
-                      color="white"
-                      onClick={signInWithGoogle}
-                    ></AiFillGoogleCircle>
-                  </div>
-                  <div
-                    className={`${
-                      loginError ? "bottom-0" : "-bottom-full"
-                    } absolute error bg-[#FF4A1C] w-full text-center text-white py-2 transition-all duration-1000`}
-                  >
-                    {errorMessage
-                      ? errorMessage
-                      : "Username or Password Incorrect"}
-                  </div>
-                </div>
-              </form>
-            </div>
-            <div className="flex flex-row items-center gap-3 mt-5">
-              <p className="text-white">Don't Have A Supervisor Account? </p>
-              <Button linkTO="/register" value="Register"></Button>
-            </div>
-          </div>
-        </div>
-      </div>
+     
       <div className=" w-1/2 h-full flex flex-col gap-5 items-center justify-center">
         <div className="bg-[#283044] overflow-hidden  z-10 relative w-fit self-center flex flex-col  gap-5 rounded-md">
           <h1 className=" text-white font-bold text-3xl m-5">Student Login</h1>

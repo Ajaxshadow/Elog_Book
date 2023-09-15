@@ -1,7 +1,7 @@
+import { Field, Formik } from "formik";
 import { SAVE_PARTICULARS, useFireHook } from "../hooks/firestoreHooks";
 
 import Button from "./Button";
-import { Formik } from "formik";
 import { ParticularsInterface } from "../interface/particulars";
 import React from "react";
 import { setParticulars } from "../features/particulars/particularsSlice";
@@ -89,8 +89,8 @@ export default function Particulars() {
                 errors[value[0]] = "Required";
               }
             });
-
-            return errors;
+            console.log({errors})
+            return ([...errors,  ]);
           }}
           onSubmit={(values, { setSubmitting }) => {
             setTimeout(() => {
@@ -129,8 +129,9 @@ export default function Particulars() {
                     Internship Start Date
                   </span>
                 </div>
-                <input
+                <Field
                   name="startDate" 
+                  
                   className="w-full bg-black/5 rounded-l-md py-2 px-5 placeholder:text-black/50 text-black"
                   type="date"
                   onChange={handleChange}
