@@ -176,11 +176,11 @@ export default function Supervisor() {
 			<div className="flex-1 flex gap-3">
 			
 				<section className="flex flex-col gap-3">
-					<div className=" flex-1 flex flex-col p-2 pb-7 rounded-lg bg-white">
+					<div className="  flex flex-col p-2 h-fit rounded-lg bg-white">
 						<h1 className="font-bold ml-2 text-xl mb-3">STUDENTS</h1>
 						<div className=" overflow-hidden border border-1 border-black/10 rounded-lg">
 							<div className=" bg-[#E3E8EF] text-black/50 text-xs flex justify-between py-2 px-3">
-								<p className="w-10 mr-6 whitespace-nowrap">Name</p>
+								<p className="w-10 text-center whitespace-nowrap">Name</p>
 								<p className="flex-1 text-center">Progress</p>
 								<p className="flex-1 text-end">Days Left</p>
 							</div>
@@ -237,7 +237,7 @@ export default function Supervisor() {
 							</div>
 						</div>
 					</div>
-					<div className=" flex-1 flex flex-col p-5 pb-7 rounded-lg bg-white">
+					<div className=" flex flex-col rounded-lg p-2 bg-white">
 						
 							<Calendar
 								disableWeekends
@@ -268,7 +268,7 @@ export default function Supervisor() {
 				<section className="flex-1 justify-stretch flex-row md:flex-col pb-5">
 					<div className=" h-full">
 						{!selsectedStudentData ? (
-							<div className="bg-white w-full h-full flex justify-center items-center font-black text-5xl text-black/20 uppercase">
+							<div className="bg-white w-full px-5 h-full flex justify-center items-center font-black text-5xl text-[#E3E8EF] uppercase">
 								Select a student to view <br /> data here
 							</div>
 						) : (
@@ -306,11 +306,11 @@ export default function Supervisor() {
 									</div>
 									<div className='bg-white rounded-xl overflow-hidden'>
 										<div className='h-full justify-center flex flex-col'>
-											<h2 className='font-bold bg-black/30 text-white text-right px-2'>Daily Entry for <br /> {highlightedDay?<span className=' text-xl font-black'>{
+											<div className=' font-bold bg-[#94979B] text-white text-right p-2'><p className='text-xs'>Daily Entry for</p> {highlightedDay?<span className=' text-xl font-black'>{
 											highlightedDay.toString().split(" ")[2]+" "+
 											highlightedDay.toString().split(" ")[0]+" "+
 											highlightedDay.toString().split(" ")[1]}
-											</span>:""}</h2>
+											</span>:""}</div>
 												<div className='p-20'>
 													<div style={{aspectRatio:"1/1.4"}} className=" text-sm h-[30rem]  overflow-scroll border-[#FF4A1C]/50 shadow-xl rounded-lg text-black/80 w-full">
 														<div className=' p-2 flex justify-end bg-black/5'>

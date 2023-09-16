@@ -9,7 +9,7 @@ export const CalendarTheme = extendTheme(CalendarDefaultTheme, {
         calendar: {
         //   borderWidth: '6px',
         //   borderColor: 'pink.400',
-          rounded: 'none',
+          rounded: '8px',
           shadow: 'none',
         //   boxShadow: '32px 16px 0 6px #3B4DCC'
             
