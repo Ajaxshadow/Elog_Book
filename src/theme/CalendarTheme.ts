@@ -40,6 +40,13 @@ export const CalendarTheme = extendTheme(CalendarDefaultTheme, {
         }
       },
       variants: {
+        highlighted:{
+          bgColor:'#FF4A1C',
+          color:'white',
+          _hover:{
+            bgColor:'#FF4A1C'
+          }
+        },
         selected: {
           bgColor: 'gray.200',
           color: 'black',
@@ -55,13 +62,6 @@ export const CalendarTheme = extendTheme(CalendarDefaultTheme, {
             color:"black"
           },
           
-        },
-        highlighted:{
-          bgColor:'#FF4A1C',
-          color:'white',
-          _hover:{
-            bgColor:'#FF4A1C'
-          }
         },
         outside: {
           bgColor:'black',
