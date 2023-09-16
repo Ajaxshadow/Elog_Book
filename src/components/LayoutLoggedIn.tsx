@@ -76,18 +76,18 @@ export function LayoutLoggedIn() {
                 value="Log Out"
                 secondary
               ></Button> */}
-              <div onClick={() => {
+              <div className="flex cursor-pointer bg-[#FF4A1C] text-white border-4 rounded-lg px-5 py-1 border-[#b8300e] flex-col justify-center items-center text-xs">
+                <AiOutlineUser />
+                {user && user.displayName?.split(" ")[0]}
+              </div>
+              <Button handleClick={() => {
                   dispatch(logout());
                   dispatch(setParticulars(null));
                   signOut(auth).then(() => {
                     navigate("/");
                   });
                   console.log(user);
-                }} className="flex cursor-pointer bg-[#FF4A1C] text-white border-4 rounded-lg px-5 py-1 border-[#b8300e] flex-col justify-center items-center text-xs">
-                <AiOutlineUser />
-                {user && user.displayName?.split(" ")[0]}
-              </div>
-              <Button value={"Logout"}></Button>
+                }} value={"Logout"}></Button>
             </ul>
           </nav>
         </header>
