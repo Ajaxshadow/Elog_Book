@@ -23,6 +23,7 @@ import {
 	subDays,
 } from 'date-fns';
 
+import Button from '../components/Button';
 import { CalendarTheme } from '../theme/CalendarTheme';
 import { ChakraProvider } from '@chakra-ui/react';
 import { DocumentData } from 'firebase/firestore/lite';
@@ -74,6 +75,7 @@ export default function Supervisor() {
 	const [daysL, setDaysL] = React.useState<any[]>([]);
 	const [selsectedStudent, setSelectedStudent] = React.useState('');
 	const [dayEntryExists, setDayEntryExists] = React.useState(false);
+	const [approved, setApproved] = React.useState(false);
 	const [whatWeek, setWhatWeek] = React.useState<{
 		weekNum: number;
 		dayName: string;
@@ -169,11 +171,11 @@ export default function Supervisor() {
 		}
 	}, [highlightedDay,startandendDate]);
 	return (
-		<div className='flex h-screen flex-col'>
+		<div className='flex h-screen flex-col px-3'>
 			<div className="h-32 w-full"></div>
 			<div className="flex-1 flex gap-3">
 			
-				<section className="flex-1 flex flex-col gap-3">
+				<section className="flex flex-col gap-3">
 					<div className=" flex-1 flex flex-col p-5 pb-7 rounded-lg bg-white">
 						<h1 className="font-bold ml-2 text-xl mb-3">Students</h1>
 						<div className=" overflow-hidden border border-1 border-black/10 rounded-lg">
@@ -263,7 +265,7 @@ export default function Supervisor() {
 							</Calendar>
 					</div>
 				</section>
-				<section className="flex-[2] justify-stretch flex-row md:flex-col pb-5">
+				<section className="flex-1 justify-stretch flex-row md:flex-col pb-5">
 					<div className=" h-full">
 						{!selsectedStudentData ? (
 							<div className="bg-white w-full h-full flex justify-center items-center font-black text-5xl text-black/20 uppercase">
@@ -290,7 +292,7 @@ export default function Supervisor() {
 										</p>
 									</div>
 			
-									<div className='bg-white p-2 rounded-lg  gap-9 flex flex-1 self-start  h-fit justify-between items-center'>
+									<div className='p-2 rounded-lg  gap-9 flex flex-1 self-start  h-fit justify-between items-center'>
 									<div
 										className=" cursor-pointer z-50 group"
 										onClick={backDate}>
@@ -302,25 +304,34 @@ export default function Supervisor() {
 											Prev Day
 										</p>
 									</div>
-									<div className='h-full'>
-										<h2>Daily Entry for</h2>
-											<div style={{aspectRatio:"1/1.4"}} className="px-5  pt-2 text-sm h-[30rem] border-2 overflow-scroll border-[#FF4A1C] rounded-lg text-black/80 w-full">
-												<p style={{
-												backgroundImage: "linear-gradient(#d1d5db 1px, transparent 0px)",
-																				backgroundSize: "100% 2em",
-																				backgroundPositionY: "1.5rem",
-																				lineHeight: "2em",
-			
-											}}>
-												{selsectedStudentData.WEEKLY_PROGRESS &&
-												whatWeek &&
-												dayEntryExists
-													? selsectedStudentData.WEEKLY_PROGRESS[
-															`Week_${whatWeek.weekNum}`
-													  ][`${whatWeek.dayName}`]
-													: 'none'}
-											</p>
-											</div>
+									<div className='bg-white p-20'>
+										<div className='h-full justify-center flex flex-col'>
+											<h2>Daily Entry for {highlightedDay?<>{
+											highlightedDay.toString().split(" ")[2]+" "+
+											highlightedDay.toString().split(" ")[0]+" "+
+											highlightedDay.toString().split(" ")[1]}
+											</>:""}</h2>
+												<div style={{aspectRatio:"1/1.4"}} className=" text-sm h-[30rem] border-2 overflow-scroll border-[#FF4A1C] rounded-lg text-black/80 w-full">
+													<div className=' p-2 flex justify-end bg-black/5'>
+														<Button handleClick={()=>{setApproved(true)}} slimmer value={approved?"Approved":"Approve"}/>
+													</div>
+													<p style={{
+													backgroundImage: "linear-gradient(#d1d5db 1px, transparent 0px)",
+													paddingInline:20,
+																					backgroundSize: "100% 2em",
+																					backgroundPositionY: "1.5rem",
+																					lineHeight: "2em",
+												}}>
+													{selsectedStudentData.WEEKLY_PROGRESS &&
+													whatWeek &&
+													dayEntryExists
+														? selsectedStudentData.WEEKLY_PROGRESS[
+																`Week_${whatWeek.weekNum}`
+														  ][`${whatWeek.dayName}`]
+														: 'none'}
+												</p>
+												</div>
+										</div>
 									</div>
 									<div
 										className=" cursor-pointer z-50 group"
