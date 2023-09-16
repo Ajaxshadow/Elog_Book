@@ -61,7 +61,7 @@ export default function Student() {
 					//
 					//** Change Back to false
 					
-					setShouldRenderParticulars(true);
+					setShouldRenderParticulars(false);
 					dispatch(setParticulars(particularsDB));
 				}
 				setWeekData(doc.data().WEEKLY_PROGRESS);
@@ -93,63 +93,65 @@ export default function Student() {
 	}
 
 	return (
-		<div className="h-[90vh] overflow-hidden gap-5 flex justify-center items-center">
-			{shouldRenderParticulars && <Particulars />}
-			<div
-				className=" cursor-pointer z-50 group"
-				onClick={() => {
-					if (currentSlide <= 0) {
-						setCurrentSlide(dates.length - 1);
-					} else {
-						setCurrentSlide(currentSlide - 1);
-					}
-					setMove(-1);
-				}}>
-				<AiFillLeftSquare
-					size={80}
-					className=" stroke-black stroke-[5px] rounded-lg  text-black/10 group-hover:text-[#FF4A1C] group-hover:stroke-0 transition-colors"
-				/>
-				<p className="w-full text-center text-xs font-extrabold group-hover:text-[#FF4A1C] transition-colors">
-					Prev Week
-				</p>
-			</div>
-			<div className=" w-2/3 lg:w-2/6 h-full relative">
-				{dates.map((date, index) => {
-					return particulars?.startDate ? (
-						<StudentSheet
-							firstWeek={index==0?firstWeek[0]:null}
-							weekData={weekData}
-							dates={dates}
-							date={date}
-							key={index}
-							weekID={index}
-							startDate={particulars.startDate}
-							currentIndex={currentSlide}
-							move={move}
-						/>
-					) : (
-						<></>
-					);
-				})}
-			</div>
-			<div
-				className=" cursor-pointer  z-50 group"
-				onClick={() => {
-					if (currentSlide >= dates.length - 1) {
-						setCurrentSlide(0);
-					} else {
-						setCurrentSlide(currentSlide + 1);
-					}
-
-					setMove(1);
-				}}>
-				<AiFillRightSquare
-					size={80}
-					className=" stroke-black stroke-[5px] rounded-lg  text-black/10 group-hover:text-[#FF4A1C] group-hover:stroke-0 transition-colors"
-				/>
-				<p className="w-full text-center text-xs font-extrabold group-hover:text-[#FF4A1C] transition-colors">
-					Next Week
-				</p>
+		<div className="h-screen flex flex-col">
+			<div className='h-32'></div>
+			<div className="flex-1 overflow-hidden gap-5 flex justify-center items-center">
+				{shouldRenderParticulars && <Particulars />}
+				<div
+					className=" cursor-pointer z-50 group"
+					onClick={() => {
+						if (currentSlide <= 0) {
+							setCurrentSlide(dates.length - 1);
+						} else {
+							setCurrentSlide(currentSlide - 1);
+						}
+						setMove(-1);
+					}}>
+					<AiFillLeftSquare
+						size={80}
+						className=" stroke-black stroke-[5px] rounded-lg  text-black/10 group-hover:text-[#FF4A1C] group-hover:stroke-0 transition-colors"
+					/>
+					<p className="w-full text-center text-xs font-extrabold group-hover:text-[#FF4A1C] transition-colors">
+						Prev Week
+					</p>
+				</div>
+				<div className=" w-2/3 lg:w-2/6 h-full relative">
+					{dates.map((date, index) => {
+						return particulars?.startDate ? (
+							<StudentSheet
+								firstWeek={index==0?firstWeek[0]:null}
+								weekData={weekData}
+								dates={dates}
+								date={date}
+								key={index}
+								weekID={index}
+								startDate={particulars.startDate}
+								currentIndex={currentSlide}
+								move={move}
+							/>
+						) : (
+							<></>
+						);
+					})}
+				</div>
+				<div
+					className=" cursor-pointer  z-50 group"
+					onClick={() => {
+						if (currentSlide >= dates.length - 1) {
+							setCurrentSlide(0);
+						} else {
+							setCurrentSlide(currentSlide + 1);
+						}
+						setMove(1);
+					}}>
+					<AiFillRightSquare
+						size={80}
+						className=" stroke-black stroke-[5px] rounded-lg  text-black/10 group-hover:text-[#FF4A1C] group-hover:stroke-0 transition-colors"
+					/>
+					<p className="w-full text-center text-xs font-extrabold group-hover:text-[#FF4A1C] transition-colors">
+						Next Week
+					</p>
+				</div>
 			</div>
 		</div>
 	);

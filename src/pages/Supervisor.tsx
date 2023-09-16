@@ -176,8 +176,8 @@ export default function Supervisor() {
 			<div className="flex-1 flex gap-3">
 			
 				<section className="flex flex-col gap-3">
-					<div className=" flex-1 flex flex-col p-5 pb-7 rounded-lg bg-white">
-						<h1 className="font-bold ml-2 text-xl mb-3">Students</h1>
+					<div className=" flex-1 flex flex-col p-2 pb-7 rounded-lg bg-white">
+						<h1 className="font-bold ml-2 text-xl mb-3">STUDENTS</h1>
 						<div className=" overflow-hidden border border-1 border-black/10 rounded-lg">
 							<div className=" bg-[#E3E8EF] text-black/50 text-xs flex justify-between py-2 px-3">
 								<p className="w-10 mr-6 whitespace-nowrap">Name</p>
@@ -304,32 +304,34 @@ export default function Supervisor() {
 											Prev Day
 										</p>
 									</div>
-									<div className='bg-white p-20'>
+									<div className='bg-white rounded-xl overflow-hidden'>
 										<div className='h-full justify-center flex flex-col'>
-											<h2>Daily Entry for {highlightedDay?<>{
+											<h2 className='font-bold bg-black/30 text-white text-right px-2'>Daily Entry for <br /> {highlightedDay?<span className=' text-xl font-black'>{
 											highlightedDay.toString().split(" ")[2]+" "+
 											highlightedDay.toString().split(" ")[0]+" "+
 											highlightedDay.toString().split(" ")[1]}
-											</>:""}</h2>
-												<div style={{aspectRatio:"1/1.4"}} className=" text-sm h-[30rem] border-2 overflow-scroll border-[#FF4A1C] rounded-lg text-black/80 w-full">
-													<div className=' p-2 flex justify-end bg-black/5'>
-														<Button handleClick={()=>{setApproved(true)}} slimmer value={approved?"Approved":"Approve"}/>
+											</span>:""}</h2>
+												<div className='p-20'>
+													<div style={{aspectRatio:"1/1.4"}} className=" text-sm h-[30rem]  overflow-scroll border-[#FF4A1C]/50 shadow-xl rounded-lg text-black/80 w-full">
+														<div className=' p-2 flex justify-end bg-black/5'>
+															<Button handleClick={()=>{setApproved(true)}} slimmer value={approved?"Approved":"Approve"}/>
+														</div>
+														<p style={{
+														backgroundImage: "linear-gradient(rgba(0,0,0,0.3) 1px, transparent 0px)",
+														paddingInline:20,
+														backgroundSize: "100% 2em",
+														backgroundPositionY: "1.5rem",
+														lineHeight: "2em",
+													}}>
+														{selsectedStudentData.WEEKLY_PROGRESS &&
+														whatWeek &&
+														dayEntryExists
+															? selsectedStudentData.WEEKLY_PROGRESS[
+																	`Week_${whatWeek.weekNum}`
+															  ][`${whatWeek.dayName}`]
+															: 'none'}
+													</p>
 													</div>
-													<p style={{
-													backgroundImage: "linear-gradient(#d1d5db 1px, transparent 0px)",
-													paddingInline:20,
-																					backgroundSize: "100% 2em",
-																					backgroundPositionY: "1.5rem",
-																					lineHeight: "2em",
-												}}>
-													{selsectedStudentData.WEEKLY_PROGRESS &&
-													whatWeek &&
-													dayEntryExists
-														? selsectedStudentData.WEEKLY_PROGRESS[
-																`Week_${whatWeek.weekNum}`
-														  ][`${whatWeek.dayName}`]
-														: 'none'}
-												</p>
 												</div>
 										</div>
 									</div>
