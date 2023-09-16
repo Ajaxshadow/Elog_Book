@@ -86,7 +86,7 @@ export default function Student() {
 	}, []);
 	if (loading) {
 		return (
-			<div className=" w-full h-[90vh] grid place-items-center">
+			<div className=" w-full h-screen grid place-items-center">
 				<InfinitySpin color="#FF4A1C" />
 			</div>
 		);
