@@ -10,7 +10,7 @@ export function LayoutNoUser() {
     <div className=" w-full ">
       <div className="h-[10vh] flex flex-col">
         <p className="bg-black text-white text-sm py-1 text-center">
-          ADEBOYE JACOB E-LOG BOOK | Final Project | BAZE UNIVERSITY
+          ADEOYE JACOB E-LOG BOOK | Final Project | BAZE UNIVERSITY
         </p>
         <header className="flex flex-1 justify-center md:justify-between items-center px-10 lg:px-60">
           <img src={logo} />
