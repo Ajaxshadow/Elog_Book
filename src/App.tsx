@@ -59,16 +59,7 @@ export function App() {
   return (
     <BrowserRouter>
       <ChakraProvider theme={CalendarTheme}>
-        {/* <div className="w-screen h-screen absolute bg-zinc-800 md:hidden z-[99]">
-        <p className=" bg-black text-white text-sm py-1 text-center">
-          ADEBOYE JACOB E-LOG BOOK | Final Project | BAZE UNIVERSITY
-        </p>
 
-        <div className=" flex justify-center flex-col font-bold text-2xl text-white text-center mt-48 ">
-          <img src={logo} alt="Logo" />
-          Open site on Desktop
-        </div>
-      </div> */}
         <div className=" font-sans bg-[#ECEDF1]">
           <div
             style={{
