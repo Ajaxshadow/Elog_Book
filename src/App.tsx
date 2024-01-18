@@ -37,29 +37,29 @@ export function App() {
 
   const user = useAppSelector((state) => state.app.user);
   const role = useAppSelector((state) => state.app.role);
-  const [localRole, setLocalRole] = React.useState<string|null>(null)
+  const [localRole, setLocalRole] = React.useState<string | null>(null)
   const auth = getAuth();
   const dispatch = useAppDispatch();
-  
+
 
 
   useEffect(() => {
-    if(localStorage.getItem("@UserRole") && localRole === null){
+    if (localStorage.getItem("@UserRole") && localRole === null) {
       setLocalRole(localStorage.getItem("@UserRole"))
     }
     const unsubscribe = auth.onIdTokenChanged((user) => {
       dispatch(setUser(user));
-      console.log({localRole})
-      if(localRole === "student" || localRole === "supervisor"){dispatch(setRole({role:localRole}))}
+      console.log({ localRole })
+      if (localRole === "student" || localRole === "supervisor") { dispatch(setRole({ role: localRole })) }
     });
-    
+
     return unsubscribe;
   }, [dispatch, localRole]);
 
   return (
     <BrowserRouter>
-    <ChakraProvider theme={CalendarTheme}>
-      <div className="w-screen h-screen absolute bg-zinc-800 md:hidden z-[99]">
+      <ChakraProvider theme={CalendarTheme}>
+        {/* <div className="w-screen h-screen absolute bg-zinc-800 md:hidden z-[99]">
         <p className=" bg-black text-white text-sm py-1 text-center">
           ADEBOYE JACOB E-LOG BOOK | Final Project | BAZE UNIVERSITY
         </p>
@@ -68,33 +68,32 @@ export function App() {
           <img src={logo} alt="Logo" />
           Open site on Desktop
         </div>
-      </div>
-      <div className=" font-sans bg-[#ECEDF1]">
-        <div
-          style={{
-            backgroundImage: `url(${GlobalBG})`,
-            backgroundPosition: "bottom",
-            backgroundSize: "30em",
-          }}
-          className={`w-full h-full absolute ${
-            user ? " opacity-5" : "opacity-10"
-          } pointer-events-none`}
-        ></div>
-        <Routes>
-          <Route path="/" element={<LayoutHeader />}>
-            <Route index element={user !== null ? 
-              role?.role === "student"?<Student /> 
-                :role?.role === "supervisor"?<Supervisor/>: <Landing/>
-              : <Landing />} />
-            <Route path="about" element={<About />} />
-            <Route path="login" element={<Login />} />
-            <Route path="superLogin" element={<SuperLogin />} />
-            <Route path="register" element={<Register />} />
-            <Route path="student" element={<Student />} />
-            <Route path="*" element={<NoMatch />} />
-          </Route>
-        </Routes>
-      </div>
+      </div> */}
+        <div className=" font-sans bg-[#ECEDF1]">
+          <div
+            style={{
+              backgroundImage: `url(${GlobalBG})`,
+              backgroundPosition: "bottom",
+              backgroundSize: "30em",
+            }}
+            className={`w-full h-full absolute ${user ? " opacity-5" : "opacity-10"
+              } pointer-events-none`}
+          ></div>
+          <Routes>
+            <Route path="/" element={<LayoutHeader />}>
+              <Route index element={user !== null ?
+                role?.role === "student" ? <Student />
+                  : role?.role === "supervisor" ? <Supervisor /> : <Landing />
+                : <Landing />} />
+              <Route path="about" element={<About />} />
+              <Route path="login" element={<Login />} />
+              <Route path="superLogin" element={<SuperLogin />} />
+              <Route path="register" element={<Register />} />
+              <Route path="student" element={<Student />} />
+              <Route path="*" element={<NoMatch />} />
+            </Route>
+          </Routes>
+        </div>
       </ChakraProvider>
     </BrowserRouter>
   );

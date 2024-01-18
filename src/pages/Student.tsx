@@ -1,18 +1,16 @@
 import {
-	AiFillLeftCircle,
 	AiFillLeftSquare,
-	AiFillRightCircle,
 	AiFillRightSquare,
 } from 'react-icons/ai';
 import React, { useEffect, useState } from 'react';
-import StudentSheet, { WeekReport } from '../components/StudentSheet';
 import { getDay, parseISO } from 'date-fns';
 
 import { GET_DOCUMENT } from '../hooks/firestoreHooks';
 import { InfinitySpin } from 'react-loader-spinner';
 import Particulars from '../components/Particulars';
 import { ParticularsInterface } from '../interface/particulars';
-import WeekSheetMotion from '../components/WeekSheetMotion';
+import StudentSheet from '../components/StudentSheet';
+// import WeekSheetMotion from '../components/WeekSheetMotion';
 import { setParticulars } from '../features/particulars/particularsSlice';
 import { useAppSelector } from '../app/hooks';
 import { useDispatch } from 'react-redux';
@@ -40,27 +38,24 @@ export default function Student() {
 		useState(false);
 	const user = useAppSelector(state => state.app.user);
 	const particulars = useAppSelector(state => state.particulars.particulars);
-	const firstTime = useAppSelector(state => state.app.firstTime);
 	const firstWeek = React.useState(1)
 	const [weekData, setWeekData] = useState({});
 	const getDoc = async () => {
 		if (user) {
 			const doc = await GET_DOCUMENT('students', user.uid);
 			if (doc?.exists()) {
-				const particularsDB: ParticularsInterface =
-					doc.data().PARTICULARS;
-				const weeklyProgress: WeekReport = doc.data().WEEKLY_PROGRESS;
+				const particularsDB: ParticularsInterface = doc.data().PARTICULARS;
 
-				
-				particularsDB.startDate&&
-				firstWeek[1](getDay(parseISO(particularsDB.startDate)));
-				
+
+
+
 				if (!particularsDB) {
 					setShouldRenderParticulars(true);
 				} else {
 					//
 					//** Change Back to false
-					
+					particularsDB.startDate &&
+						firstWeek[1](getDay(parseISO(particularsDB.startDate)));
 					setShouldRenderParticulars(false);
 					dispatch(setParticulars(particularsDB));
 				}
@@ -115,11 +110,11 @@ export default function Student() {
 						Prev Week
 					</p>
 				</div>
-				<div className=" w-2/3 lg:w-2/6 h-full relative">
+				<div className=" w-4/6 lg:w-3/5 h-full relative">
 					{dates.map((date, index) => {
 						return particulars?.startDate ? (
 							<StudentSheet
-								firstWeek={index==0?firstWeek[0]:null}
+								firstWeek={index == 0 ? firstWeek[0] : null}
 								weekData={weekData}
 								dates={dates}
 								date={date}

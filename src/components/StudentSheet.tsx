@@ -1,16 +1,15 @@
-import React, { ChangeEventHandler, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 import { AiFillCheckCircle } from "react-icons/ai";
 import Button from "./Button";
 import { SAVE_WEEK_TO_DB } from "../hooks/firestoreHooks";
 import WeekSheetMotion from "./WeekSheetMotion";
-import { current } from "@reduxjs/toolkit";
 import { useAppSelector } from "../app/hooks";
 
 type StudentSheetProps = {
   dates: string[];
   date: string;
-  firstWeek:number|null;
+  firstWeek: number | null;
   currentIndex: number;
   weekID: number;
   move: number;
@@ -96,7 +95,7 @@ export default function StudentSheet(props: StudentSheetProps) {
     setWeekReport((prev) => ({
       ...prev,
       [name]: text,
-    })); 
+    }));
 
     // console.log(weekReport);
   };
@@ -119,20 +118,18 @@ export default function StudentSheet(props: StudentSheetProps) {
       ref={ref}
       style={props.style}
       className={` StudentSheet
-      ${
-        props.weekID === props.currentIndex
+      ${props.weekID === props.currentIndex
           ? "opacity-100"
           : " pointer-events-none"
-      }
-      ${
-        props.move === -1
+        }
+      ${props.move === -1
           ? props.weekID === props.currentIndex - 1
             ? " -translate-x-full"
             : "translate-x-0"
           : props.weekID === props.currentIndex - 1
-          ? "translate-x-full"
-          : "translate-x-0"
-      }
+            ? "translate-x-full"
+            : "translate-x-0"
+        }
       
      
        rounded-t-2xl h-full w-full shadow-lg opacity-0  transition-all duration-[500ms] flex flex-col bg-white/80 absolute`}
@@ -153,8 +150,8 @@ export default function StudentSheet(props: StudentSheetProps) {
                 weekSaved
                   ? "Saved!"
                   : DBhasData && weekDataEdited
-                  ? "Update"
-                  : "Save"
+                    ? "Update"
+                    : "Save"
               }
               Right={weekSaved ? AiFillCheckCircle : null}
             />

@@ -14,18 +14,12 @@ import {
 import { GET_DOCUMENT, useFireHook } from '../hooks/firestoreHooks';
 import {
 	addDays,
-	daysToWeeks,
-	differenceInBusinessDays,
 	differenceInCalendarWeeks,
-	differenceInWeeks,
-	parse,
 	parseJSON,
 	subDays,
 } from 'date-fns';
 
 import Button from '../components/Button';
-import { CalendarTheme } from '../theme/CalendarTheme';
-import { ChakraProvider } from '@chakra-ui/react';
 import { DocumentData } from 'firebase/firestore/lite';
 import React from 'react';
 import { useAppSelector } from '../app/hooks';
@@ -34,19 +28,16 @@ const ProgressBar = ({ prg, selected }: { prg: number; selected: boolean }) => {
 	return (
 		<div className="flex w-full flex-col-reverse items-center ">
 			<div
-				className={`rounded-lg w-full h-2  ${
-					selected ? 'bg-white/50' : 'bg-[#FF4A1C]/20'
-				}`}>
+				className={`rounded-lg w-full h-2  ${selected ? 'bg-white/50' : 'bg-[#FF4A1C]/20'
+					}`}>
 				<div
-					className={`rounded-lg bg-[#FF4A1C] h-full ${
-						selected ? 'bg-white' : 'bg-[#FF4A1C]'
-					}`}
+					className={`rounded-lg bg-[#FF4A1C] h-full ${selected ? 'bg-white' : 'bg-[#FF4A1C]'
+						}`}
 					style={{ width: prg + '%' }}></div>
 			</div>
 			<span
-				className={` w-full text-sm font-bold ${
-					selected ? 'text-white' : 'text-black/50'
-				}`}>
+				className={` w-full text-sm font-bold ${selected ? 'text-white' : 'text-black/50'
+					}`}>
 				{prg + '%'}
 			</span>
 		</div>
@@ -126,11 +117,11 @@ export default function Supervisor() {
 
 	const backDate = () => {
 		console.log("hello")
-		if(highlightedDay){setHighlightedDay(subDays(highlightedDay,1))}
+		if (highlightedDay) { setHighlightedDay(subDays(highlightedDay, 1)) }
 	}
 
 	const frontDate = () => {
-		if(highlightedDay){setHighlightedDay(addDays(highlightedDay,1))}
+		if (highlightedDay) { setHighlightedDay(addDays(highlightedDay, 1)) }
 	}
 
 	React.useEffect(() => {
@@ -145,36 +136,36 @@ export default function Supervisor() {
 	}, [getProg, getDays, sps, prg]);
 
 	React.useEffect(() => {
-		console.log({highlightedDay})
+		console.log({ highlightedDay })
 		const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'];
 		if (highlightedDay && startandendDate && selsectedStudentData) {
 			const x = {
 				weekNum:
 					differenceInCalendarWeeks(
 						highlightedDay,
-						startandendDate.start)+1
-					,
+						startandendDate.start) + 1
+				,
 				dayName: days[parseJSON(highlightedDay).getDay() - 1],
 			};
 			console.log(x.weekNum)
 			try {
 				let y =
 					selsectedStudentData.WEEKLY_PROGRESS[`Week_${x.weekNum}`][
-						`${x.dayName}`
+					`${x.dayName}`
 					];
-					console.log(selsectedStudentData.WEEKLY_PROGRESS)
+				console.log(selsectedStudentData.WEEKLY_PROGRESS)
 				setDayEntryExists(true);
 			} catch {
 				setDayEntryExists(false);
 			}
 			setWhatWeek(x);
 		}
-	}, [highlightedDay,startandendDate]);
+	}, [highlightedDay, startandendDate]);
 	return (
 		<div className='flex h-screen flex-col px-3'>
 			<div className="h-32 w-full"></div>
 			<div className="flex-1 flex gap-3">
-			
+
 				<section className="flex flex-col gap-3">
 					<div className="  flex flex-col p-2 h-fit rounded-lg bg-white">
 						<h1 className="font-bold ml-2 text-xl mb-3">STUDENTS</h1>
@@ -197,11 +188,10 @@ export default function Supervisor() {
 								 outline outline-2 outline-transparent cursor-pointer 
 								transition-[outline] duration-200 rounded-sm py-1
 						 rounded-l-full rounded-r-lg p-2 pl-1
-								${
-							selsectedStudent === i.SiD
-								? 'bg-[#FF4A1C] text-white'
-								: 'bg-white hover:bg-[#FF4A1C]/5'
-						}
+								${selsectedStudent === i.SiD
+													? 'bg-[#FF4A1C] text-white'
+													: 'bg-white hover:bg-[#FF4A1C]/5'
+												}
 								`}>
 											<div className="mr-6">
 												<Initials name={i.name} />
@@ -238,31 +228,31 @@ export default function Supervisor() {
 						</div>
 					</div>
 					<div className=" flex flex-col rounded-lg p-2 bg-white">
-						
-							<Calendar
-								disableWeekends
-								highlightedDay={
-									highlightedDay ? highlightedDay : undefined
-								}
-								allowOutsideDays
-								singleDateSelection
-								value={startandendDate ? startandendDate : {}}
-								weekStartsOn={1}
-								onSelectDate={(x: CalendarDate | any) => {
-									setHighlightedDay(x);
-								}}>
-								<CalendarControls>
-									<CalendarPrevButton />
-									<CalendarNextButton />
-								</CalendarControls>
-								<CalendarMonths>
-									<CalendarMonth>
-										<CalendarMonthName />
-										<CalendarWeek />
-										<CalendarDays />
-									</CalendarMonth>
-								</CalendarMonths>
-							</Calendar>
+
+						<Calendar
+							disableWeekends
+							highlightedDay={
+								highlightedDay ? highlightedDay : undefined
+							}
+							allowOutsideDays
+							singleDateSelection
+							value={startandendDate ? startandendDate : {}}
+							weekStartsOn={1}
+							onSelectDate={(x: CalendarDate | any) => {
+								setHighlightedDay(x);
+							}}>
+							<CalendarControls>
+								<CalendarPrevButton />
+								<CalendarNextButton />
+							</CalendarControls>
+							<CalendarMonths>
+								<CalendarMonth>
+									<CalendarMonthName />
+									<CalendarWeek />
+									<CalendarDays />
+								</CalendarMonth>
+							</CalendarMonths>
+						</Calendar>
 					</div>
 				</section>
 				<section className="flex-1 justify-stretch flex-row md:flex-col pb-5">
@@ -291,61 +281,61 @@ export default function Supervisor() {
 											}
 										</p>
 									</div>
-			
+
 									<div className='p-2 rounded-lg  gap-9 flex flex-1 self-start  h-fit justify-between items-center'>
-									<div
-										className=" cursor-pointer z-50 group"
-										onClick={backDate}>
-										<AiFillLeftSquare
-											size={80}
-											className=" stroke-black stroke-[5px] rounded-lg  text-black/10 group-hover:text-[#FF4A1C] group-hover:stroke-0 transition-colors"
-										/>
-										<p className="w-full text-center text-xs font-extrabold group-hover:text-[#FF4A1C] transition-colors">
-											Prev Day
-										</p>
-									</div>
-									<div className='bg-white rounded-xl overflow-hidden'>
-										<div className='h-full justify-center flex flex-col'>
-											<div className=' font-bold bg-[#94979B] text-white text-right p-2'><p className='text-xs'>Daily Entry for</p> {highlightedDay?<span className=' text-xl font-black'>{
-											highlightedDay.toString().split(" ")[2]+" "+
-											highlightedDay.toString().split(" ")[0]+" "+
-											highlightedDay.toString().split(" ")[1]}
-											</span>:""}</div>
+										<div
+											className=" cursor-pointer z-50 group"
+											onClick={backDate}>
+											<AiFillLeftSquare
+												size={80}
+												className=" stroke-black stroke-[5px] rounded-lg  text-black/10 group-hover:text-[#FF4A1C] group-hover:stroke-0 transition-colors"
+											/>
+											<p className="w-full text-center text-xs font-extrabold group-hover:text-[#FF4A1C] transition-colors">
+												Prev Day
+											</p>
+										</div>
+										<div className='bg-white rounded-xl overflow-hidden'>
+											<div className='h-full justify-center flex flex-col'>
+												<div className=' font-bold bg-[#94979B] text-white text-right p-2'><p className='text-xs'>Daily Entry for</p> {highlightedDay ? <span className=' text-xl font-black'>{
+													highlightedDay.toString().split(" ")[2] + " " +
+													highlightedDay.toString().split(" ")[0] + " " +
+													highlightedDay.toString().split(" ")[1]}
+												</span> : ""}</div>
 												<div className='p-20'>
-													<div style={{aspectRatio:"1/1.4"}} className=" text-sm h-[30rem]  overflow-scroll border-[#FF4A1C]/50 shadow-xl rounded-lg text-black/80 w-full">
+													<div style={{ aspectRatio: "1/1.4" }} className=" text-sm h-[30rem]  overflow-scroll border-[#FF4A1C]/50 shadow-xl rounded-lg text-black/80 w-full">
 														<div className=' p-2 flex justify-end bg-black/5'>
-															<Button handleClick={()=>{setApproved(true)}} slimmer value={approved?"Approved":"Approve"}/>
+															<Button handleClick={() => { setApproved(true) }} slimmer value={approved ? "Approved" : "Approve"} />
 														</div>
 														<p style={{
-														backgroundImage: "linear-gradient(rgba(0,0,0,0.3) 1px, transparent 0px)",
-														paddingInline:20,
-														backgroundSize: "100% 2em",
-														backgroundPositionY: "1.5rem",
-														lineHeight: "2em",
-													}}>
-														{selsectedStudentData.WEEKLY_PROGRESS &&
-														whatWeek &&
-														dayEntryExists
-															? selsectedStudentData.WEEKLY_PROGRESS[
-																	`Week_${whatWeek.weekNum}`
-															  ][`${whatWeek.dayName}`]
-															: 'none'}
-													</p>
+															backgroundImage: "linear-gradient(rgba(0,0,0,0.3) 1px, transparent 0px)",
+															paddingInline: 20,
+															backgroundSize: "100% 2em",
+															backgroundPositionY: "1.5rem",
+															lineHeight: "2em",
+														}}>
+															{selsectedStudentData.WEEKLY_PROGRESS &&
+																whatWeek &&
+																dayEntryExists
+																? selsectedStudentData.WEEKLY_PROGRESS[
+																`Week_${whatWeek.weekNum}`
+																][`${whatWeek.dayName}`]
+																: 'none'}
+														</p>
 													</div>
 												</div>
+											</div>
 										</div>
-									</div>
-									<div
-										className=" cursor-pointer z-50 group"
-										onClick={frontDate}>
-										<AiFillRightSquare
-											size={80}
-											className=" stroke-black stroke-[5px] rounded-lg  text-black/10 group-hover:text-[#FF4A1C] group-hover:stroke-0 transition-colors"
-										/>
-										<p className="w-full text-center text-xs font-extrabold group-hover:text-[#FF4A1C] transition-colors">
-											Next Day
-										</p>
-									</div>
+										<div
+											className=" cursor-pointer z-50 group"
+											onClick={frontDate}>
+											<AiFillRightSquare
+												size={80}
+												className=" stroke-black stroke-[5px] rounded-lg  text-black/10 group-hover:text-[#FF4A1C] group-hover:stroke-0 transition-colors"
+											/>
+											<p className="w-full text-center text-xs font-extrabold group-hover:text-[#FF4A1C] transition-colors">
+												Next Day
+											</p>
+										</div>
 									</div>
 								</div>
 							</div>
