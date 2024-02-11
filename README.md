@@ -1,4 +1,4 @@
-# Innov8 Hub MERN Stack Website with TypeScript, Framer Motion, Chakra UI, and Firebase 🚀
+# E-log Book is a modern interactive solution, that aids the internship period, specifically targeted at Nigerian tertiary institutions, built with TypeScript, Framer Motion, Chakra UI, and Firebase 🚀
 
 Welcome to the Innov8 Hub MERN Stack Website repository! This project is an interactive platform built using TypeScript, React.js, Framer Motion, Chakra UI, Firebase, and Cloud Functions. 🌐
 
