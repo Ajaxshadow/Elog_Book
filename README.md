@@ -29,11 +29,11 @@ The Innov8 Hub MERN Stack Website is a versatile tool designed to facilitate eff
 
 1. Clone the repository:
    ```
-   git clone https://github.com/your-username/innov8-hub-mern.git
+   git clone https://github.com/JohnsonDaniyan/E-LogBook.git
    ```
 2. Navigate to the project directory:
    ```
-   cd innov8-hub-mern
+   cd E-LogBook
    ```
 3. Install dependencies:
    ```
