@@ -47,7 +47,7 @@ The Innov8 Hub MERN Stack Website is a versatile tool designed to facilitate eff
 
 ## Contributing
 
-We welcome contributions from the community to enhance and improve the Innov8 Hub MERN Stack Website. Feel free to submit pull requests, report issues, or suggest new features. Together, let's empower educators and students alike! 🙌
+We welcome contributions from the community to enhance and improve the E-log Book Web Application. Feel free to submit pull requests, report issues, or suggest new features. Together, let's empower educators and students alike! 🙌
 
 ## License
 
